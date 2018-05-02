@@ -1,14 +1,11 @@
 <template>
 	<div>
-		<!-- 头部 -->
 		<KHeader></KHeader>
-		<div class="content box">
-			<!-- 轮播图组件 -->
-			<Carousel></Carousel>
-			<div class="lineHeight"></div>
-			<div class="c_litt_div">
-				<h3 class="c_litt_title"><span></span>最新推荐</h3>
-		 		<div class="v_ttmore">
+		<!-- 获取路由路径上的参数{{$route.params.bid}} -->
+		<div class="content">
+			<div class="c_hea">
+				<span class="c_h_title">分类</span>
+				<div class="v_ttmore">
 			 		<router-link :to="{name:'category',params:{bid:1}}">电子产品</router-link>
 			 		<router-link :to="{name:'category',params:{bid:2}}">衣物鞋包</router-link>
 			 		<router-link :to="{name:'category',params:{bid:3}}">美妆个护</router-link>
@@ -18,11 +15,10 @@
 			 		<router-link :to="{name:'category',params:{bid:0}}">查看全部&gt;</router-link>
 		 			<div class="clear"></div>
 		 		</div>
-		 		<div class="clear"></div>
-		 	</div>
-		 	<div class="listbox">
+			</div>
+			<div class="listbox">
 		 		<ul class="databox">
-				 	<li class="items" v-for="(shop,index) in newShop" :key="index">
+				 	<li class="items" v-for="shop in cateShop">
 						<router-link class="imgbox pr" :to="{name:'detail',params:{bid:shop._id}}">
 							 <img class="lazy" v-lazy="shop.img" width="210" height="210" style="display: inline;">
 						</router-link>
@@ -46,68 +42,71 @@
 				 </ul>
 		 	</div>
 		</div>
-		<!-- 底部 -->
 		<KFooter></KFooter>
 	</div>
 </template>
-
 <script type="text/javascript">
 	import KHeader from '../base/KHeader.vue';
 	import KFooter from '../base/KFooter.vue';
-	/* 导入轮播图组件 */
-	import Carousel from '../base/Carousel.vue';
-	/* 导入查询最新数据的api */
-	import {getNewShop} from '../api/index.js';
-
+	import {getCateShop} from '../api/index.js';
 	export default{
 		data(){
-			return {newShop:[]}
+			return {cateShop:[]}
 		},
 		created(){
-			this.getNewShop();
+			this.getCateShop();
 		},
 		methods:{
-			/* 查询最新数据 */
-			async getNewShop(){
-				this.newShop = await getNewShop();
+			/* 查询分类数据 */
+			async getCateShop(){
+				this.cateShop = await getCateShop(this.bid);
 			}
 		},
-		computed:{},
+		computed:{
+			bid(){
+				return this.$route.params.bid; //将路径上的id映射到bid上
+			}
+		},
+		watch:{
+			'$route':["getCateShop"],
+		},
 		components:{
 			KHeader,
 			KFooter,
-			Carousel,
 		}
 	}
 </script>
 <style type="text/css" scoped>
-	.box{
-		margin: 50px auto;
+	.c_hea{
+		margin-top: 50px;
+	    height: 55px;
+	    border-bottom: 1px solid #ddd;
+	    position: relative;
 	}
-	.c_litt_div .c_litt_title{
-		font-size: 24px;
-	    margin-bottom: 19px;
-	    margin-top: 0;
-	    float: left;
+	.c_hea .c_h_title{
+		font-size: 30px;
+		-webkit-text-fill-color: transparent;
+	    background: -webkit-gradient(linear,left top,left bottom,from(#FD0051),to(#A22C93));
+	    -webkit-background-clip: text;
 	}
-	.c_litt_div .c_litt_title span{
-		border-left: 3px solid #dd5862;
-	    font-size: 18px;
-	    margin-right: 10px;
-	}
-	.c_litt_div .v_ttmore{
+	.c_hea .v_ttmore{
 		float: right;
+	    position: absolute;
+	    right: 0;
+	    bottom: 8px;
 	}
-	.c_litt_div .v_ttmore a{
-		float: left;
-	    display: inline-block;
-	    margin-left: 12px;
+	.c_hea .v_ttmore a{
+		color: #7d7d7d;
+		display: inline-block;
+	    margin-left: 8px;
 	    margin-top: 4px;
-	    transition: .4s;
-	    color: #7d7d7d;
+		transition: .4s;
 	}
-	.c_litt_div .v_ttmore a:hover{
+	.c_hea .v_ttmore a:hover{
 		color:#dd5862;
+	}
+	.listbox{
+		margin-top: 20px;
 	}
 	.listbox .items{
 		width: 210px;

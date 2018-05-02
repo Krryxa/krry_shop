@@ -9,7 +9,17 @@ axios.interceptors.response.use((res)=>{
 });
 
 
-// 获取轮播图数据，返回的是一个promise对象
+// 获取最新数据，返回8条最新数据
 export let getNewShop = ()=>{
 	return axios.get('/newshop');
+}
+
+// 获取分类数据
+export let getCateShop = (id)=>{
+	return axios.get(`/category?bid=${id}`);
+}
+
+// 根据id获取某一条数据
+export let getDetail = (id)=>{
+	return axios.get(`/detail?bid=${id}`);
 }
