@@ -21,7 +21,8 @@
 		 		<div class="clear"></div>
 		 	</div>
 		 	<div class="listbox">
-		 		<ul class="databox">
+		 		<Loading v-if="loading"></Loading>
+		 		<ul v-if="!loading" class="databox">
 				 	<li class="items" v-for="(shop,index) in newShop" :key="index">
 						<router-link class="imgbox pr" :to="{name:'detail',params:{bid:shop._id}}">
 							 <img class="lazy" v-lazy="shop.img" width="210" height="210" style="display: inline;">
@@ -56,12 +57,14 @@
 	import KFooter from '../base/KFooter.vue';
 	/* 导入轮播图组件 */
 	import Carousel from '../base/Carousel.vue';
+	/* 导入动画加载组件 */
+	import Loading from '../base/Loading.vue';
 	/* 导入查询最新数据的api */
 	import {getNewShop} from '../api/index.js';
 
 	export default{
 		data(){
-			return {newShop:[]}
+			return {newShop:[],loading:true}
 		},
 		created(){
 			this.getNewShop();
@@ -70,6 +73,7 @@
 			/* 查询最新数据 */
 			async getNewShop(){
 				this.newShop = await getNewShop();
+				this.loading = false;
 			}
 		},
 		computed:{},
@@ -77,6 +81,7 @@
 			KHeader,
 			KFooter,
 			Carousel,
+			Loading,
 		}
 	}
 </script>

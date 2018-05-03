@@ -2,45 +2,53 @@
 	<div class="header">
 		<div class="content">
 			<div class="left">
-				<a href="#" class="h_a">
+				<router-link to="home" class="h_a">
 					<img src="../assets/krrylogo.png" width="60">
-				</a>
+				</router-link>
 				<ul class="nav">
 					<li>
-						<a href="#">
+						<router-link to="/home">
 							<i class="iconfont icon-home"></i>
 							首页
-						</a>
+						</router-link>
 					</li>
 					<li>
 						
-						<a href="#">
+						<router-link to="#">
 							<i class="iconfont icon-leimupinleifenleileibie2"></i>
 							分类
-						</a>
+						</router-link>
 					</li>
 					<li>
-						<a href="#">
+						<router-link :to="{name:'category',params:{bid:0}}">
 							<i class="iconfont icon-new-box"></i>
 							最新
-						</a>
+						</router-link>
 					</li>
 					<li>
-						<a href="#">
+						<router-link to="#">
 							<i class="iconfont icon-gerenzhongxin"></i>
 							个人中心
-						</a>
+						</router-link>
 					</li>
 				</ul>
 			</div>
 			<div class="right">
-				<a href="#">登录</a>
-				<a href="#">注册</a>
+				<div v-if="this.$store.state.username">
+					<span>欢迎：</span>
+					<router-link to="#" class="r_logins">{{this.$store.state.username}}</router-link>
+					<span class="r_button" @click="loginout">退出</span>
+				</div>
+				<div v-if="!this.$store.state.username">
+					<router-link to="/login">登录</router-link>
+					<router-link to="/register">注册</router-link>
+				</div>
 			</div>
 		</div>
 	</div>
 </template>
 <script type="text/javascript">
+	import * as Types from '../store/mutations-type.js';
 	export default{
 		data(){
 			return {msg:'hello'}
@@ -48,7 +56,24 @@
 		created(){
 
 		},
-		methods:{},
+		methods:{
+			loginout(){
+				//询问框
+				layer.confirm('您确定退出登录？', {
+				  btn: ['确定','取消'] //按钮
+				}, ()=>{
+				  //确定退出登录
+				  //清空缓存数据
+				  sessionStorage.clear();
+				  //全局状态的用户名设为false
+				  this.$store.commit(Types.SETUSERNAME,false);
+				  layer.msg('成功退出', {icon: 1});
+				}, ()=>{
+				  //取消
+				  
+				});
+			}
+		},
 		computed:{},
 		components:{}
 	}
@@ -111,5 +136,15 @@
 	}
 	.header .right a:hover{
 		color:#dd5862;
+	}
+	.header .right .r_logins{
+		margin-left: 0px;
+    	color: #ff8244;
+	}
+	.header .right .r_button{
+		margin-left: 10px;
+	}
+	.header .right .r_button:hover{
+		color:red;
 	}
 </style>

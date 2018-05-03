@@ -17,7 +17,8 @@
 		 		</div>
 			</div>
 			<div class="listbox">
-		 		<ul class="databox">
+				<Loading v-if="loading"></Loading>
+		 		<ul v-if="!loading" class="databox">
 				 	<li class="items" v-for="shop in cateShop">
 						<router-link class="imgbox pr" :to="{name:'detail',params:{bid:shop._id}}">
 							 <img class="lazy" v-lazy="shop.img" width="210" height="210" style="display: inline;">
@@ -48,10 +49,12 @@
 <script type="text/javascript">
 	import KHeader from '../base/KHeader.vue';
 	import KFooter from '../base/KFooter.vue';
+	/* 导入动画加载组件 */
+	import Loading from '../base/Loading.vue';
 	import {getCateShop} from '../api/index.js';
 	export default{
 		data(){
-			return {cateShop:[]}
+			return {cateShop:[],loading:true}
 		},
 		created(){
 			this.getCateShop();
@@ -60,6 +63,7 @@
 			/* 查询分类数据 */
 			async getCateShop(){
 				this.cateShop = await getCateShop(this.bid);
+				this.loading = false;
 			}
 		},
 		computed:{
@@ -68,11 +72,16 @@
 			}
 		},
 		watch:{
-			'$route':["getCateShop"],
+			'$route'(to,from){
+				console.log(to.path+"==="+from.path);
+				this.loading = true;
+				this.getCateShop();
+			},
 		},
 		components:{
 			KHeader,
 			KFooter,
+			Loading,
 		}
 	}
 </script>

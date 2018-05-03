@@ -9,6 +9,16 @@ export default new Router({
       path:'/',
       redirect:'/home'
     },//this.$route.meta.keepAlive
+    {
+      path:'/login',
+      component:()=>import('../components/Login.vue'),
+      meta:{title:'登录'}
+    },
+    {
+      path:'/register',
+      component:()=>import('../components/Register.vue'),
+      meta:{title:'注册'}
+    },
   	{
       path:'/home',
       component:()=>import('../components/Home.vue'),
@@ -24,7 +34,7 @@ export default new Router({
       path:'/detail/:bid',
       component:()=>import('../components/Detail.vue'),
       name:"detail",
-      meta:{keepAlive:true,title:'详细'}
+      meta:{title:'详细'}
     },
   	{
       path:'*',

@@ -2,18 +2,21 @@
 	<div>
 		<KHeader></KHeader>
 		<div class="content">
-			<div class="left">
-				<img v-lazy="shop.img" width="250" height="250">
+			<Loading v-if="loading"></Loading>
+			<div v-if="!loading">
+				<div class="left">
+					<img v-lazy="shop.img" width="250" height="250">
+				</div>
+				<div class="right">
+					<div class="title">{{shop.desc}}</div>
+					<div class="price">¥{{shop.price}}</div>
+					<router-link  class="category" :to="{name:'category',params:{bid:shop.kindId}}">{{shop.kind}}</router-link>
+					<div class="username">{{shop.username}}  <i class="iconfont icon-box"></i></div>
+					<button class="intocar">加入购物车</button>
+					<button class="buynow">立即购买</button>
+				</div>
+				<div class="clear"></div>
 			</div>
-			<div class="right">
-				<div class="title">{{shop.desc}}</div>
-				<div class="price">¥{{shop.price}}</div>
-				<router-link  class="category" :to="{name:'category',params:{bid:shop.kindId}}">{{shop.kind}}</router-link>
-				<div class="username">{{shop.username}}</div>
-				<button class="intocar">加入购物车</button>
-				<button class="buynow">立即购买</button>
-			</div>
-			<div class="clear"></div>
 		</div>
 		<KFooter></KFooter>
 	</div>
@@ -21,11 +24,13 @@
 <script type="text/javascript">
 	import KHeader from '../base/KHeader.vue';
 	import KFooter from '../base/KFooter.vue';
+	/* 导入动画加载组件 */
+	import Loading from '../base/Loading.vue';
 	//导入查询某条数据的api
 	import {getDetail} from '../api/index.js';
 	export default{
 		data(){
-			return {shop:""}
+			return {shop:"",loading:true,}
 		},
 		created(){
 			this.getDetail();
@@ -33,6 +38,7 @@
 		methods:{
 			async getDetail(){
 				this.shop = await getDetail(this.bid);
+				this.loading = false;
 			}
 		},
 		computed:{
@@ -43,6 +49,7 @@
 		components:{
 			KHeader,
 			KFooter,
+			Loading,
 		}
 	}
 </script>
@@ -50,6 +57,7 @@
 	.content{
 		margin-top: 100px;
     	margin-bottom: 100px;
+    	min-height: 250px;
 	}
 	.left{
 		width:300px;
