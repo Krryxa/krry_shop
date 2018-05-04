@@ -62,7 +62,7 @@
 					return;
 				}
 				if(this.user.password.length < 6){
-					layer.msg('密码不能小于6');
+					layer.msg('密码长度不能小于6');
 					return;
 				}
 				if(this.user.repassword == ''){

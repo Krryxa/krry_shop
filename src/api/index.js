@@ -29,7 +29,23 @@ export let getCateShop = (id)=>{
 	return axios.get(`/category?bid=${id}`);
 }
 
-// 根据id获取某一条数据
+// 根据id获取某一条商品数据
 export let getDetail = (id)=>{
 	return axios.get(`/detail?bid=${id}`);
+}
+
+//检测登录的用户是否将此商品加入购物车
+export let detectCar = (shopId,userId)=>{
+	return axios.get(`/detectCar?shopId=${shopId}&userId=${userId}`);
+}
+
+// 获取一条商品数据和检测是否加入购物车的封装all
+export let getDeAll = (shopId,userId)=>{
+	return axios.all([getDetail(shopId),detectCar(shopId,userId)]);
+}
+
+
+//点击加入购物车
+export let addShop = (data)=>{
+	return axios.post('/addShop',data);
 }

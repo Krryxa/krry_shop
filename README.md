@@ -4,6 +4,7 @@
 
 ## 技术栈
 - vue + node.js + express框架
+- MongoDB数据库
 
 ## css的一些问题
 - css3:nth-child()伪类选择器
@@ -14,7 +15,7 @@
 - 垂直居中
 - 这个方法使用绝对定位的div，把它的top设置为50％，margin-top设置为负的content高度。这意味着对象必须在CSS中指定固定的高度。
 - 因为有固定高度，或许你想给 content 指定 overflow:auto，这样如果 content 太多的话，就会出现滚动条，以免content 溢出。
-```
+```css
 #content {
 	margin: 0 auto;
 	text-align: center;
@@ -118,8 +119,8 @@ app.post('/addUser', (req, res)=> {
 				    };
 				    dbo.collection("user").insertOne(myobj, (err, suc)=>{
 				        if (err) throw err;
-						//发送响应数据，发送登录用户名到前台，放进sessionStorage
-						res.end(JSON.stringify({'username':user.username}));
+						//发送响应数据，发送登录用户id和用户名到前台，放进sessionStorage
+						res.end(JSON.stringify({'id':suc.insertedId,'username':user.username}));
 				        db.close();
 				    });
 		        }
@@ -184,7 +185,42 @@ this.$store.commit(Types.SETUSERNAME,false);
 ```
 
 ## 解除用户一直点击提交事件
-```
+```html
 <p @click="flag && clickEvent()"></p>
 加上一个标志位来控制点击事件是否能触发，在进入后置为false，事件异步操作结束后置为true
+```
+
+
+## 获取商品详细信息，并且如果已经登录就，检测登录的用户是否已经将此商品加入购物车
+- api中，使用all
+```javascript
+// 获取一条商品数据和检测是否加入购物车的封装all
+export let getDeAll = (shopId,userId)=>{
+	return axios.all([getDetail(shopId),detectCar(shopId,userId)]);
+}
+```
+
+- 页面中的method
+```javascript
+// 获取商品详细信息，并且如果已经登录就检测登录的用户是否已经将此商品加入购物车
+async getDeAll(){
+	//检测是否登录、登录的用户是否已经将此商品加入购物车
+	let user = JSON.parse(sessionStorage.getItem('user'));
+	//如果已登录
+	if(user){
+		//两个都一起异步，1.获取商品信息，2.检测登录的用户是否已经将此商品加入购物车
+		let [shop,result] = await getDeAll(this.bid,user.id);
+		//商品信息赋值到this.shop
+		this.shop = shop;
+		//如果result有数据，表明已经加入购物车
+		if(result.length != 0){
+			this.flag = false; //阻止继续点击加入购物车事件
+			this.intoShop = '车上等你';
+		}
+	}else{
+		//如果没有登录，就只需要执行获取商品详细信息的操作
+		this.shop = await getDetail(this.bid);
+	}
+	this.loading = false;
+},
 ```

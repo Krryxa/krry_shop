@@ -97,8 +97,86 @@ app.get('/category', (req, res)=> {
 	}
 });
 
-//根据id查询某一条数据
+//根据id查询某一条商品数据
 app.get('/detail', (req, res)=> {
+	let {query} = url.parse(req.url,true);//true把query转化成对象
+    let id = query.bid; //取出的是字符串
+	MongoClient.connect(mogourl, (err, db)=>{
+	    if (err) throw err;
+	    let dbo = db.db("krry_shop");
+	    //根据id查询一条数据
+	    dbo.collection("shop").find({_id:ObjectID(id)}).toArray((err, result)=>{ // 返回集合中所有数据
+	        if (err) throw err;
+	        res.setHeader('Content-Type','application/json;charset=utf-8');
+			//发送响应数据
+			res.end(JSON.stringify(result[0])); //取一个数据，只有一个数据
+	        db.close();
+	    });
+	});
+});
+
+
+//检测登录的用户是否将此商品加入购物车
+app.get('/detectCar', (req, res)=> {
+	let {query} = url.parse(req.url,true);//true把query转化成对象
+    let shopId = query.shopId; //商品id
+    let userId = query.userId; //用户Id
+	MongoClient.connect(mogourl, (err, db)=>{
+	    if (err) throw err;
+	    let dbo = db.db("krry_shop");
+	    //根据商品id和用户id查询 是否有这条数据
+	    dbo.collection("shopCar").find({'shopId':shopId,'userId':userId}).toArray((err, result)=>{ // 返回集合中所有数据
+	        if (err) throw err;
+	        res.setHeader('Content-Type','application/json;charset=utf-8');
+	        //前台做一个判断 result.length == 0 表示查询无果，未加入购物车
+			res.end(JSON.stringify(result));
+			
+	        db.close();
+	    });
+	});
+});
+
+
+//点击加入购物车
+app.post('/addShop', (req, res)=> {
+	let body = '';
+	//读取数据
+	req.on('data',chunk=>{
+		body += chunk; //读取请求体
+	});
+	//结束读取
+	req.on('end',()=>{
+		let cars = JSON.parse(body); //json解析post的数据
+		MongoClient.connect(mogourl, (err, db)=> {
+		    if (err) throw err;
+		    //设置响应头
+		    res.setHeader('Content-Type','application/json;charset=utf-8');
+		    let dbo = db.db("krry_shop");
+		    //设置存储的购物车的信息
+        	let myobj = {
+		    	'userId':cars.userId, //用户Id
+		    	'shopId':cars.shopId, //商品Id
+		    	'shopName':cars.shopName,//商品描述
+		    	'shopPrice':cars.shopPrice, //商品单价
+		    	'shopImg':cars.shopImg, //商品图片地址
+		    	'shopCount':1, //商品个数
+		    	'addTime':new Date().toLocaleDateString()
+		    };
+		    //插入一条数据进入购物车
+		    dbo.collection("shopCar").insertOne(myobj, (err, suc)=>{
+		        if (err) throw err;
+		        //发送响应数据
+				res.end('success'); //取一个数据，只有一个数据
+		        db.close();
+		    });
+		});
+	});
+});
+
+
+
+//进入购物车（个人中心）
+app.get('/shopCar',(req,res)=>{
 	let {query} = url.parse(req.url,true);//true把query转化成对象
     let id = query.bid; //取出的是字符串
 	MongoClient.connect(mogourl, (err, db)=>{
@@ -147,8 +225,8 @@ app.post('/addUser', (req, res)=> {
 				    };
 				    dbo.collection("user").insertOne(myobj, (err, suc)=>{
 				        if (err) throw err;
-						//发送响应数据，发送登录用户名到前台，放进sessionStorage
-						res.end(JSON.stringify({'username':user.username}));
+						//发送响应数据，发送登录用户id和用户名到前台，放进sessionStorage
+						res.end(JSON.stringify({'id':suc.insertedId,'username':user.username}));
 				        db.close();
 				    });
 		        }
@@ -180,11 +258,11 @@ app.post('/loginUser', (req, res)=> {
 		        	//返回的result是一个数组对象，取出第一个数组元素
 		        	result = result[0];
 		        	//成功登录
-		        	if(result.password == user.password) res.end(JSON.stringify(result));
+		        	if(result.password == user.password) res.end(JSON.stringify({'id':result._id,'username':result.username}));
 		        	//密码错误
 		        	else res.end('errorCode');
 		        }
-		        //用户不存在
+		        //用户不存在  前台 result.length == 0 表示查询无果，用户不存在
 		        res.end(JSON.stringify(result));
 				
 		        db.close();
@@ -204,7 +282,7 @@ var server = app.listen(3000, ()=>{
 
 
 /**
- * 不使用这种建立服务器，使用的是express框架
+ * 不使用这种建立服务器，上面使用的是express框架
  */
 // http.createServer((req,res)=>{
 // 	//解决跨域问题  开发时用到，上线时不用

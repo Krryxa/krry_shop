@@ -12,6 +12,7 @@ import $ from 'jquery';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
 
+// 导入弹窗插件
 import './assets/js/layer.js';
 import './assets/css/layer.css';
 

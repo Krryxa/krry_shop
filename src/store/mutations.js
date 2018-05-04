@@ -15,7 +15,7 @@ import * as Types from './mutations-type.js';
 const mutations = {
 	[Types.SETUSERNAME](state,username){ //state是自动放入的，默认指的是当前的state
 		state.username = username;
-	}
+	},
 };
 
 export default mutations;
