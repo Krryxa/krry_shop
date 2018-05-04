@@ -13,6 +13,11 @@ export let addUser = (data)=>{
 	return axios.post('/addUser',data);
 }
 
+//注册
+export let loginUser = (data)=>{
+	return axios.post('/loginUser',data);
+}
+
 
 // 获取最新数据，返回8条最新数据
 export let getNewShop = ()=>{

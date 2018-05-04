@@ -5,11 +5,12 @@
 				<h1>Welcome</h1>
 				<form class="form">
 					<input type="text" placeholder="用户名" v-model="user.username">
-					<input type="text" placeholder="手机号码" v-model="user.phone">
-					<input type="password" placeholder="密码">
-					<input type="password" placeholder="确认密码" v-model="user.password">
-					<button type="button" id="login-button" @click="add">注册</button>
+					<input type="text" placeholder="手机号码" v-model.number="user.phone">
+					<input type="password" placeholder="密码" v-model="user.password">
+					<input type="password" placeholder="确认密码" v-model="user.repassword">
+					<button type="button" id="login-button" @click="flag && beforeAdd()">{{msg}}</button>
 				</form>
+				<span class="c_back" @click="goback">返回</span>
 				<router-link class="c_register" to="login">已有账号？点击登录</router-link>
 			</div>
 			<ul class="bg-bubbles">
@@ -32,7 +33,12 @@
 	import * as Types from '../store/mutations-type.js';
 	export default{
 		data(){
-			return {user:{}}
+			return {user:{
+				username:'',
+				password:'',
+				repassword:'',
+				phone:''
+			},flag:true,msg:'注册'}
 		},
 		created(){
 			$('#login-button').click(function(event){
@@ -42,15 +48,58 @@
 			});
 		},
 		methods:{
+			beforeAdd(){
+				if(this.user.username == ''){
+					layer.msg('请输入用户名');
+					return;
+				}
+				if(this.user.phone == ''){
+					layer.msg('请输入手机号码');
+					return;
+				}
+				if(this.user.password == ''){
+					layer.msg('请输入密码');
+					return;
+				}
+				if(this.user.password.length < 6){
+					layer.msg('密码不能小于6');
+					return;
+				}
+				if(this.user.repassword == ''){
+					layer.msg('请确认密码');
+					return;
+				}
+				if(this.user.password != this.user.repassword){
+					layer.msg('两次密码不相同');
+					return;
+				}
+				//注册方法
+				this.add();
+			},
 			async add(){
+				this.flag = false;
+				this.msg = '注册中';
+				// 发送请求
 				let userObj = await addUser(this.user); //返回的是一个对象
-				sessionStorage.setItem('user',JSON.stringify(userObj)); //这里继续转化为json字符串，放进sessionStorage
-				//执行方法，将用户名设置进全局参数  vuex
-				//提交mutation的Types.SETUSERNAME方法
-				//第二个参数是携带的参数
-				this.$store.commit(Types.SETUSERNAME,userObj.username);
-				//登录成功进入首页
-				this.$router.push('/home');
+				if(userObj == 'errorRepeat'){
+					layer.msg('用户名已被注册，重新输入');
+					this.flag = true;
+					this.msg = '注册';
+				} 
+				else{
+					this.msg = '注册成功';
+					sessionStorage.setItem('user',JSON.stringify(userObj)); //这里继续转化为json字符串，放进sessionStorage
+					//执行方法，将用户名设置进全局参数  vuex
+					//提交mutation的Types.SETUSERNAME方法
+					//第二个参数是携带的参数
+					this.$store.commit(Types.SETUSERNAME,userObj.username);
+					//注册成功进入首页
+					this.$router.push('/home');
+				}
+			},
+			goback(){
+				//返回一级
+				this.$router.go(-1);
 			}
 		},
 		computed:{},
@@ -64,12 +113,11 @@
 	  background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
 	  opacity: 0.8;
 	  position: absolute;
-	  top: 200px;
+	  top: 0;
 	  left: 0;
 	  bottom:0;
 	  right:0;
 	  width: 100%;
-	  margin-top: -200px;
 	  overflow: hidden;
 
 	}
@@ -80,11 +128,13 @@
 	          transform: translateY(85px);
 	}
 	.container {
-	  max-width: 600px;
-	  margin: 0 auto;
-	  padding: 12% 0;
-	  height: 400px;
-	  text-align: center;
+		margin: 0 auto;
+	    width: 100%;
+	    position: absolute;
+	    height: 410px;
+	    top: 50%;
+	    margin-top: -235px;
+		text-align: center;
 	}
 	.container h1 {
 	  font-size: 40px;
@@ -240,6 +290,15 @@
   		position: relative;
 	}
 	.c_register:hover{
+		color:#bd3119;
+	}
+	.c_back{
+		position: relative;
+	    z-index: 2;
+	    cursor: url(../assets/link.cur),pointer;
+	    margin-right: 86px;
+	}
+	.c_back:hover{
 		color:#bd3119;
 	}
 	@-webkit-keyframes square {

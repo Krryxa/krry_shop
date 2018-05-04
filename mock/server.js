@@ -128,25 +128,70 @@ app.post('/addUser', (req, res)=> {
 		let user = JSON.parse(body); //json解析post的数据
 		MongoClient.connect(mogourl, (err, db)=> {
 		    if (err) throw err;
+		    //设置响应头
+		    res.setHeader('Content-Type','application/json;charset=utf-8');
 		    let dbo = db.db("krry_shop");
-		    let myobj = {
-		    	'username':user.username,
-		    	'phone':user.phone,
-		    	'password':user.password,
-		    	'createTime':new Date().toLocaleDateString()
-		    };
-		    dbo.collection("user").insertOne(myobj, (err, suc)=>{
+		    //根据用户名查询一条数据，看看是否数据库已经存在这个用户名
+		    dbo.collection("user").find({'username':user.username}).toArray((err, result)=>{ // 返回集合中所有数据
 		        if (err) throw err;
-		        //添加数据成功
+		        //若存在此用户名，响应重新输入用户名
+		        if(result.length != 0){
+		        	res.end('errorRepeat');
+		        }else{
+		        	//不存在此用户名，可注册
+		        	let myobj = {
+				    	'username':user.username,
+				    	'phone':user.phone,
+				    	'password':user.password,
+				    	'createTime':new Date().toLocaleDateString()
+				    };
+				    dbo.collection("user").insertOne(myobj, (err, suc)=>{
+				        if (err) throw err;
+						//发送响应数据，发送登录用户名到前台，放进sessionStorage
+						res.end(JSON.stringify({'username':user.username}));
+				        db.close();
+				    });
+		        }
+		    });
+		});
+	});
+});
+
+
+//登录
+app.post('/loginUser', (req, res)=> {
+	let body = '';
+	//读取数据
+	req.on('data',chunk=>{
+		body += chunk; //读取请求体
+	});
+	//结束读取
+	req.on('end',()=>{
+		let user = JSON.parse(body); //json解析post的数据，是user对象
+		MongoClient.connect(mogourl, (err, db)=> {
+		    if (err) throw err;
+		    let dbo = db.db("krry_shop");
+		    //根据用户名查询一条数据
+		    dbo.collection("user").find({'username':user.username}).toArray((err, result)=>{ // 返回集合中所有数据
+		        if (err) throw err;
 		        res.setHeader('Content-Type','application/json;charset=utf-8');
-				//发送响应数据
-				res.end(JSON.stringify({'username':user.username}));
+		        //若存在此用户名，验证密码是否正确
+		        if(result.length != 0){
+		        	//返回的result是一个数组对象，取出第一个数组元素
+		        	result = result[0];
+		        	//成功登录
+		        	if(result.password == user.password) res.end(JSON.stringify(result));
+		        	//密码错误
+		        	else res.end('errorCode');
+		        }
+		        //用户不存在
+		        res.end(JSON.stringify(result));
+				
 		        db.close();
 		    });
 		});
 	});
 })
-
 
 var server = app.listen(3000, ()=>{
   var host = server.address().address

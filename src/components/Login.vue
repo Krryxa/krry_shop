@@ -4,10 +4,11 @@
 			<div class="container">
 				<h1>Welcome</h1>
 				<form class="form">
-					<input type="text" placeholder="用户名">
-					<input type="password" placeholder="密码">
-					<button type="submit" id="login-button">登录</button>
+					<input type="text" placeholder="用户名" v-model="user.username">
+					<input type="password" placeholder="密码" v-model="user.password">
+					<button type="button" id="login-button" @click="flag && beforeLogin()">{{msg}}</button>
 				</form>
+				<span class="c_back" @click="goback">返回</span>
 				<router-link class="c_register" to="register">没有账号？点击注册</router-link>
 			</div>
 			
@@ -27,18 +28,68 @@
 	</div>
 </template>
 <script type="text/javascript">
+	import {loginUser} from '../api/index.js';
+	// vuex
+	import * as Types from '../store/mutations-type.js';
 	export default{
 		data(){
-			return {msg:'hello'}
+			return {user:{
+				username:'',
+				password:''
+			},flag:true,msg:'登录'}
 		},
 		created(){
-			$('#login-button').click(function(event){
+			$('#login-button').click((event)=>{
 				event.preventDefault();
 				$('form').fadeOut(500);
 				$('.wrapper').addClass('form-success');
 			});
 		},
-		methods:{},
+		methods:{
+			beforeLogin(){
+				if(this.user.username == ''){
+					layer.msg('请输入用户名');
+					return;
+				}
+				if(this.user.password == ''){
+					layer.msg('请输入密码');
+					return;
+				}
+				//登录方法
+				this.login();
+			},
+			async login(){
+				this.flag = false;
+				this.msg = '登录中';
+				// 发送请求
+				let res = await loginUser(this.user);
+				if(res.length == 0){
+					layer.msg('用户名不存在');
+					this.flag = true;
+					this.msg = '登录';
+				}
+				else if(res == 'errorCode'){
+					layer.msg('密码错误');
+					this.flag = true;
+					this.msg = '登录';
+				}
+				else{
+					this.msg = '登录成功';
+					//成功登录，保存session，跳转到首页
+					sessionStorage.setItem('user',JSON.stringify(res)); //这里继续转化为json字符串，放进sessionStorage
+					//执行方法，将用户名设置进全局参数  vuex
+					//提交mutation的Types.SETUSERNAME方法
+					//第二个参数是携带的参数
+					this.$store.commit(Types.SETUSERNAME,res.username);
+					//登录成功进入首页
+					this.$router.push('/home');
+				}
+			},
+			goback(){
+				//返回一级
+				this.$router.go(-1);
+			}
+		},
 		computed:{},
 		components:{
 
@@ -52,12 +103,11 @@
 	  background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
 	  opacity: 0.8;
 	  position: absolute;
-	  top: 200px;
+	  top: 0;
 	  left: 0;
 	  bottom:0;
 	  right:0;
 	  width: 100%;
-	  margin-top: -200px;
 	  overflow: hidden;
 
 	}
@@ -68,11 +118,13 @@
 	          transform: translateY(85px);
 	}
 	.container {
-	  max-width: 600px;
-	  margin: 0 auto;
-	  padding: 12% 0;
-	  height: 400px;
-	  text-align: center;
+	    margin: 0 auto;
+	    width: 100%;
+	    position: absolute;
+	    height: 294px;
+	    top: 50%;
+	    margin-top: -190px;
+    	text-align: center;
 	}
 	.container h1 {
 	  font-size: 40px;
@@ -228,6 +280,15 @@
   		position: relative;
 	}
 	.c_register:hover{
+		color:#bd3119;
+	}
+	.c_back{
+		position: relative;
+	    z-index: 2;
+	    cursor: url(../assets/link.cur),pointer;
+	    margin-right: 86px;
+	}
+	.c_back:hover{
 		color:#bd3119;
 	}
 	@-webkit-keyframes square {

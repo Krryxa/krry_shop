@@ -11,6 +11,21 @@
 - :nth-child(an) 匹配所有倍数为a的元素。其中参数an中的字母n不可缺省，它是倍数写法的标志，如3n、5n
 - :nth-child(odd) 与 :nth-child(even) 分别匹配序号为奇数与偶数的元素。奇数(odd)与(2n+1)结果一样；偶数(even)与(2n+0)及(2n)结果一样
 
+- 垂直居中
+- 这个方法使用绝对定位的div，把它的top设置为50％，margin-top设置为负的content高度。这意味着对象必须在CSS中指定固定的高度。
+- 因为有固定高度，或许你想给 content 指定 overflow:auto，这样如果 content 太多的话，就会出现滚动条，以免content 溢出。
+```
+#content {
+	margin: 0 auto;
+	text-align: center;
+    position: absolute;
+    width:100%;
+    top: 50%;
+    height: 240px;
+    margin-top: -120px; /* negative half of the height */
+}
+```
+
 ### 文本控制一行和多行，溢出省略
 ```css
 /* 超出一行省略 */
@@ -84,24 +99,34 @@ app.post('/addUser', (req, res)=> {
 		let user = JSON.parse(body); //json解析post的数据
 		MongoClient.connect(mogourl, (err, db)=> {
 		    if (err) throw err;
+		    //设置响应头
+		    res.setHeader('Content-Type','application/json;charset=utf-8');
 		    let dbo = db.db("krry_shop");
-		    let myobj = {
-		    	'username':user.username,
-		    	'phone':user.phone,
-		    	'password':user.password,
-		    	'createTime':new Date().toLocaleDateString()
-		    };
-		    dbo.collection("user").insertOne(myobj, (err, suc)=>{
+		    //根据用户名查询一条数据，看看是否数据库已经存在这个用户名
+		    dbo.collection("user").find({'username':user.username}).toArray((err, result)=>{ // 返回集合中所有数据
 		        if (err) throw err;
-		        //添加数据成功
-		        res.setHeader('Content-Type','application/json;charset=utf-8');
-				//发送响应数据
-				res.end(JSON.stringify({'username':user.username}));
-		        db.close();
+		        //若存在此用户名，响应重新输入用户名
+		        if(result.length != 0){
+		        	res.end('errorRepeat');
+		        }else{
+		        	//不存在此用户名，可注册
+		        	let myobj = {
+				    	'username':user.username,
+				    	'phone':user.phone,
+				    	'password':user.password,
+				    	'createTime':new Date().toLocaleDateString()
+				    };
+				    dbo.collection("user").insertOne(myobj, (err, suc)=>{
+				        if (err) throw err;
+						//发送响应数据，发送登录用户名到前台，放进sessionStorage
+						res.end(JSON.stringify({'username':user.username}));
+				        db.close();
+				    });
+		        }
 		    });
 		});
 	});
-})
+});
 ```
 
 
@@ -111,6 +136,7 @@ app.post('/addUser', (req, res)=> {
 // 提交数据变化，使用户名保存在全局状态中
 this.$store.commit(Types.SETUSERNAME,userObj.username); 
 ```
+
 - 顶部栏的用户登录状态信息：state里面的变量有username，使用v-if来切换
 ```html
 <div v-if="this.$store.state.username">
@@ -123,6 +149,7 @@ this.$store.commit(Types.SETUSERNAME,userObj.username);
 	<router-link to="/register">注册</router-link>
 </div>
 ```
+
 - 由于页面刷新会导致vuex的状态清除，因为vuex主要是处理组件的通信问题
 - 所以在main.js中的全局钩子beforeEach设置vuex的属性
 ```javascript
@@ -154,4 +181,10 @@ router.beforeEach(function(from,to,next){
 sessionStorage.clear();
 //全局状态的用户名设为false
 this.$store.commit(Types.SETUSERNAME,false);
+```
+
+## 解除用户一直点击提交事件
+```
+<p @click="flag && clickEvent()"></p>
+加上一个标志位来控制点击事件是否能触发，在进入后置为false，事件异步操作结束后置为true
 ```
