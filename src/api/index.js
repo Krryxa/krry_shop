@@ -49,3 +49,13 @@ export let getDeAll = (shopId,userId)=>{
 export let addShop = (data)=>{
 	return axios.post('/addShop',data);
 }
+
+//进入购物车查询购物车信息
+export let shopCar = (userId)=>{
+	return axios.get(`/shopCar?userId=${userId}`);
+}
+
+//删除购物车中的一个商品（参数：购物车中数据id）
+export let deleteShop = (id)=>{
+	return axios.get(`/deleteShop?id=${id}`);
+}

@@ -36,6 +36,12 @@ export default new Router({
       name:"detail",
       meta:{title:'详细'}
     },
+    {
+      path:'/admin/:username',
+      component:()=>import('../components/Admin.vue'),
+      name:"admin",
+      meta:{title:'个人中心'}
+    },
   	{
       path:'*',
       redirect:'/home'

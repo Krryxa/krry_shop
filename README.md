@@ -12,7 +12,7 @@
 - :nth-child(an) 匹配所有倍数为a的元素。其中参数an中的字母n不可缺省，它是倍数写法的标志，如3n、5n
 - :nth-child(odd) 与 :nth-child(even) 分别匹配序号为奇数与偶数的元素。奇数(odd)与(2n+1)结果一样；偶数(even)与(2n+0)及(2n)结果一样
 
-- 垂直居中
+### 垂直居中
 - 这个方法使用绝对定位的div，把它的top设置为50％，margin-top设置为负的content高度。这意味着对象必须在CSS中指定固定的高度。
 - 因为有固定高度，或许你想给 content 指定 overflow:auto，这样如果 content 太多的话，就会出现滚动条，以免content 溢出。
 ```css
@@ -66,23 +66,34 @@ watch:{
 ```
 
 
-## node连接MongoDB，需要根据id查找时
-- 需要再加入一个ObjectID
+## node连接MongoDB
+- 把连接放到外面，数据库实例作为全局参数
 ```javascript
 let MongoClient = require('mongodb').MongoClient;
 let ObjectID = require('mongodb').ObjectID;  
 let mogourl = "mongodb://localhost:27017/";
-MongoClient.connect(mogourl, (err, db)=>{
+ 
+//数据库实例
+let dbo = '';
+//连接数据库
+ MongoClient.connect(mogourl, (err, db)=>{
     if (err) throw err;
-    let dbo = db.db("krry_shop");
-    //根据id查询一条数据
-    dbo.collection("shop").find({_id:ObjectID(id)}).toArray((err, result)=>{ // 返回集合中所有数据
-        if (err) throw err;
-        res.setHeader('Content-Type','application/json;charset=utf-8');
-		//发送响应数据
-		res.end(JSON.stringify(result[0])); //取一个数据，根据id查询的只有一个数据
-        db.close();
-    });
+    dbo = db.db("krry_shop");
+    console.log('连接数据库成功');
+});
+```
+
+
+## 需要根据id查找时
+- 需要再加入一个ObjectID
+```javascript
+//根据id查询一条数据
+dbo.collection("shop").find({_id:ObjectID(id)}).toArray((err, result)=>{ // 返回集合中所有数据
+    if (err) throw err;
+    res.setHeader('Content-Type','application/json;charset=utf-8');
+	//发送响应数据
+	res.end(JSON.stringify(result[0])); //取一个数据，只有一个数据
+
 });
 ```
 
@@ -98,34 +109,30 @@ app.post('/addUser', (req, res)=> {
 	//结束读取
 	req.on('end',()=>{
 		let user = JSON.parse(body); //json解析post的数据
-		MongoClient.connect(mogourl, (err, db)=> {
-		    if (err) throw err;
-		    //设置响应头
-		    res.setHeader('Content-Type','application/json;charset=utf-8');
-		    let dbo = db.db("krry_shop");
-		    //根据用户名查询一条数据，看看是否数据库已经存在这个用户名
-		    dbo.collection("user").find({'username':user.username}).toArray((err, result)=>{ // 返回集合中所有数据
-		        if (err) throw err;
-		        //若存在此用户名，响应重新输入用户名
-		        if(result.length != 0){
-		        	res.end('errorRepeat');
-		        }else{
-		        	//不存在此用户名，可注册
-		        	let myobj = {
-				    	'username':user.username,
-				    	'phone':user.phone,
-				    	'password':user.password,
-				    	'createTime':new Date().toLocaleDateString()
-				    };
-				    dbo.collection("user").insertOne(myobj, (err, suc)=>{
-				        if (err) throw err;
-						//发送响应数据，发送登录用户id和用户名到前台，放进sessionStorage
-						res.end(JSON.stringify({'id':suc.insertedId,'username':user.username}));
-				        db.close();
-				    });
-		        }
-		    });
-		});
+
+	    //设置响应头
+	    res.setHeader('Content-Type','application/json;charset=utf-8');
+	    //根据用户名查询一条数据，看看是否数据库已经存在这个用户名
+	    dbo.collection("user").find({'username':user.username}).toArray((err, result)=>{ // 返回集合中所有数据
+	        if (err) throw err;
+	        //若存在此用户名，响应重新输入用户名
+	        if(result.length != 0){
+	        	res.end('errorRepeat');
+	        }else{
+	        	//不存在此用户名，可注册
+	        	let myobj = {
+			    	'username':user.username,
+			    	'phone':user.phone,
+			    	'password':user.password,
+			    	'createTime':new Date().toLocaleDateString()
+			    };
+			    dbo.collection("user").insertOne(myobj, (err, suc)=>{
+			        if (err) throw err;
+					//发送响应数据，发送登录用户id和用户名到前台，放进sessionStorage
+					res.end(JSON.stringify({'id':suc.insertedId,'username':user.username}));
+			    });
+	        }
+	    });
 	});
 });
 ```
@@ -191,7 +198,7 @@ this.$store.commit(Types.SETUSERNAME,false);
 ```
 
 
-## 获取商品详细信息，并且如果已经登录就，检测登录的用户是否已经将此商品加入购物车
+## 获取商品详细信息，如果已经登录就测登录的用户是否已经将此商品加入购物车
 - api中，使用all
 ```javascript
 // 获取一条商品数据和检测是否加入购物车的封装all
@@ -224,3 +231,5 @@ async getDeAll(){
 	this.loading = false;
 },
 ```
+
+## 拦截器，未登录不能访问admin，登陆后只能访问自己的admin

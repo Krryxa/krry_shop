@@ -20,10 +20,11 @@ export default {
 	*{margin:0;padding: 0}
 	body{cursor:url(./assets/default.cur),default;}
 	ul li{list-style: none}
-	a{text-decoration: none;color:#333;cursor:url(./assets/link.cur),pointer !important;}
-	a:hover{text-decoration: none;}
+	a{text-decoration: none;color:#333;cursor:url(./assets/link.cur),pointer !important;transition: .3s !important;}
+	a:hover{text-decoration: none;color:#dd5862 !important;transition: .3s !important;}
 	img{vertical-align: middle;}
-	input,button{-webkit-appearance:none;}
+	button{cursor:url(./assets/link.cur),pointer !important;}
+	input,button{outline:none;}
 	.clear{clear:both;}
 	.content{width:960px;margin: 0 auto;position: relative;height: 100%;}
 	.borderRadius8{border-radius: 8px;}

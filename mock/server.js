@@ -10,6 +10,15 @@ let mogourl = "mongodb://localhost:27017/";
 let express = require('express');
 let app = express();
  
+//数据库实例
+let dbo = '';
+//连接数据库
+ MongoClient.connect(mogourl, (err, db)=>{
+    if (err) throw err;
+    dbo = db.db("krry_shop");
+    console.log('连接数据库成功');
+});
+
 
 app.use((req,res,next)=>{
 	// //如果未登录
@@ -40,20 +49,17 @@ app.all('*', (req, res, next)=>{
 // 查询最新数据 
 app.get('/newshop', (req, res)=> {
     let newShop = "";
-	MongoClient.connect(mogourl, (err, db)=>{
-	    if (err) throw err;
-	    let dbo = db.db("krry_shop");
-	    //查询最新的8条数据
-	    dbo.collection("shop").find().toArray((err, result)=>{ // 返回集合中所有数据
-	        if (err) throw err;
-	        //将查询出来的数据翻转后，截取前8条，保存到变量中，查询最新的数据，最后的8条数据
-	        newShop = result.reverse().slice(0,8);
-	        res.setHeader('Content-Type','application/json;charset=utf-8');
-			//发送响应数据
-			res.end(JSON.stringify(newShop));
-	        db.close();
-	    });
-	});
+
+    //查询最新的8条数据
+    dbo.collection("shop").find().toArray((err, result)=>{ // 返回集合中所有数据
+        if (err) throw err;
+        //将查询出来的数据翻转后，截取前8条，保存到变量中，查询最新的数据，最后的8条数据
+        newShop = result.reverse().slice(0,8);
+        res.setHeader('Content-Type','application/json;charset=utf-8');
+		//发送响应数据
+		res.end(JSON.stringify(newShop));
+    });
+
 });
 
 // 查询分类数据
@@ -64,36 +70,26 @@ app.get('/category', (req, res)=> {
 	let queryCate = "";
 	//如果是0，则查询全部数据
 	if(id == 0){
-		MongoClient.connect(mogourl, (err, db)=>{
-		    if (err) throw err;
-		    let dbo = db.db("krry_shop");
-		    //查询最新的8条数据
-		    dbo.collection("shop").find().toArray((err, result)=>{ // 返回集合中所有数据
-		        if (err) throw err;
-		        //将查询出来的数据保存到变量中，查询最新的数据，后面插入的数据越新
-		        cateShop = result.reverse();
-		        res.setHeader('Content-Type','application/json;charset=utf-8');
-				//发送响应数据
-				res.end(JSON.stringify(cateShop));
-		        db.close();
-		    });
-		});
+	    //查询最新的8条数据
+	    dbo.collection("shop").find().toArray((err, result)=>{ // 返回集合中所有数据
+	        if (err) throw err;
+	        //将查询出来的数据保存到变量中，查询最新的数据，后面插入的数据越新
+	        cateShop = result.reverse();
+	        res.setHeader('Content-Type','application/json;charset=utf-8');
+			//发送响应数据
+			res.end(JSON.stringify(cateShop));
+	    });
 	}else{
 		//否则查询相关类别的数据
-		MongoClient.connect(mogourl, (err, db)=>{
-		    if (err) throw err;
-		    let dbo = db.db("krry_shop");
-		    //查询最新的8条数据
-		    dbo.collection("shop").find({"kindId":id}).toArray((err, result)=>{ // 返回集合中所有数据
-		        if (err) throw err;
-		        //将查询出来的数据保存到变量中，查询最新的数据，后面插入的数据越新
-		        cateShop = result.reverse();
-		        res.setHeader('Content-Type','application/json;charset=utf-8');
-				//发送响应数据
-				res.end(JSON.stringify(cateShop));
-		        db.close();
-		    });
-		});
+	    //查询最新的8条数据
+	    dbo.collection("shop").find({"kindId":id}).toArray((err, result)=>{ // 返回集合中所有数据
+	        if (err) throw err;
+	        //将查询出来的数据保存到变量中，查询最新的数据，后面插入的数据越新
+	        cateShop = result.reverse();
+	        res.setHeader('Content-Type','application/json;charset=utf-8');
+			//发送响应数据
+			res.end(JSON.stringify(cateShop));
+	    });
 	}
 });
 
@@ -101,18 +97,16 @@ app.get('/category', (req, res)=> {
 app.get('/detail', (req, res)=> {
 	let {query} = url.parse(req.url,true);//true把query转化成对象
     let id = query.bid; //取出的是字符串
-	MongoClient.connect(mogourl, (err, db)=>{
-	    if (err) throw err;
-	    let dbo = db.db("krry_shop");
-	    //根据id查询一条数据
-	    dbo.collection("shop").find({_id:ObjectID(id)}).toArray((err, result)=>{ // 返回集合中所有数据
-	        if (err) throw err;
-	        res.setHeader('Content-Type','application/json;charset=utf-8');
-			//发送响应数据
-			res.end(JSON.stringify(result[0])); //取一个数据，只有一个数据
-	        db.close();
-	    });
-	});
+
+    //根据id查询一条数据
+    dbo.collection("shop").find({_id:ObjectID(id)}).toArray((err, result)=>{ // 返回集合中所有数据
+        if (err) throw err;
+        res.setHeader('Content-Type','application/json;charset=utf-8');
+		//发送响应数据
+		res.end(JSON.stringify(result[0])); //取一个数据，只有一个数据
+
+    });
+
 });
 
 
@@ -121,19 +115,16 @@ app.get('/detectCar', (req, res)=> {
 	let {query} = url.parse(req.url,true);//true把query转化成对象
     let shopId = query.shopId; //商品id
     let userId = query.userId; //用户Id
-	MongoClient.connect(mogourl, (err, db)=>{
-	    if (err) throw err;
-	    let dbo = db.db("krry_shop");
-	    //根据商品id和用户id查询 是否有这条数据
-	    dbo.collection("shopCar").find({'shopId':shopId,'userId':userId}).toArray((err, result)=>{ // 返回集合中所有数据
-	        if (err) throw err;
-	        res.setHeader('Content-Type','application/json;charset=utf-8');
-	        //前台做一个判断 result.length == 0 表示查询无果，未加入购物车
-			res.end(JSON.stringify(result));
-			
-	        db.close();
-	    });
-	});
+
+    //根据商品id和用户id查询 是否有这条数据
+    dbo.collection("shopCar").find({'shopId':shopId,'userId':userId}).toArray((err, result)=>{ // 返回集合中所有数据
+        if (err) throw err;
+        res.setHeader('Content-Type','application/json;charset=utf-8');
+        //前台做一个判断 result.length == 0 表示查询无果，未加入购物车
+		res.end(JSON.stringify(result));
+
+    });
+
 });
 
 
@@ -147,29 +138,26 @@ app.post('/addShop', (req, res)=> {
 	//结束读取
 	req.on('end',()=>{
 		let cars = JSON.parse(body); //json解析post的数据
-		MongoClient.connect(mogourl, (err, db)=> {
-		    if (err) throw err;
-		    //设置响应头
-		    res.setHeader('Content-Type','application/json;charset=utf-8');
-		    let dbo = db.db("krry_shop");
-		    //设置存储的购物车的信息
-        	let myobj = {
-		    	'userId':cars.userId, //用户Id
-		    	'shopId':cars.shopId, //商品Id
-		    	'shopName':cars.shopName,//商品描述
-		    	'shopPrice':cars.shopPrice, //商品单价
-		    	'shopImg':cars.shopImg, //商品图片地址
-		    	'shopCount':1, //商品个数
-		    	'addTime':new Date().toLocaleDateString()
-		    };
-		    //插入一条数据进入购物车
-		    dbo.collection("shopCar").insertOne(myobj, (err, suc)=>{
-		        if (err) throw err;
-		        //发送响应数据
-				res.end('success'); //取一个数据，只有一个数据
-		        db.close();
-		    });
-		});
+
+	    //设置响应头
+	    res.setHeader('Content-Type','application/json;charset=utf-8');
+	    //设置存储的购物车的信息
+    	let myobj = {
+	    	'userId':cars.userId, //用户Id
+	    	'shopId':cars.shopId, //商品Id
+	    	'isSelected':true, //默认选中
+	    	'shopName':cars.shopName,//商品描述
+	    	'shopPrice':cars.shopPrice, //商品单价
+	    	'shopImg':cars.shopImg, //商品图片地址
+	    	'shopCount':1, //商品个数
+	    	'addTime':new Date().toLocaleDateString()
+	    };
+	    //插入一条数据进入购物车
+	    dbo.collection("shopCar").insertOne(myobj, (err, suc)=>{
+	        if (err) throw err;
+	        //发送响应数据
+			res.end('success'); //取一个数据，只有一个数据
+	    });
 	});
 });
 
@@ -178,20 +166,33 @@ app.post('/addShop', (req, res)=> {
 //进入购物车（个人中心）
 app.get('/shopCar',(req,res)=>{
 	let {query} = url.parse(req.url,true);//true把query转化成对象
-    let id = query.bid; //取出的是字符串
-	MongoClient.connect(mogourl, (err, db)=>{
-	    if (err) throw err;
-	    let dbo = db.db("krry_shop");
-	    //根据id查询一条数据
-	    dbo.collection("shop").find({_id:ObjectID(id)}).toArray((err, result)=>{ // 返回集合中所有数据
-	        if (err) throw err;
-	        res.setHeader('Content-Type','application/json;charset=utf-8');
-			//发送响应数据
-			res.end(JSON.stringify(result[0])); //取一个数据，只有一个数据
-	        db.close();
-	    });
-	});
+    let userId = query.userId; //取出的是字符串
+
+    //查询购物车信息
+    dbo.collection("shopCar").find({'userId':userId}).toArray((err, result)=>{ // 返回集合中所有数据
+        if (err) throw err;
+        res.setHeader('Content-Type','application/json;charset=utf-8');
+		//发送响应数据
+		res.end(JSON.stringify(result.reverse())); //取一个数据，只有一个数据
+    });
+
 });
+
+
+//删除购物车的某一个商品
+app.get('/deleteShop',(req,res)=>{
+	let {query} = url.parse(req.url,true);//true把query转化成对象
+    let id = query.id; //取出的是字符串
+
+    //查询购物车信息
+    dbo.collection("shopCar").deleteOne({_id:ObjectID(id)}, (err, obj)=>{
+        if (err) throw err;
+        res.end('success');
+
+    });
+
+});
+
 
 
 //注册
@@ -204,34 +205,30 @@ app.post('/addUser', (req, res)=> {
 	//结束读取
 	req.on('end',()=>{
 		let user = JSON.parse(body); //json解析post的数据
-		MongoClient.connect(mogourl, (err, db)=> {
-		    if (err) throw err;
-		    //设置响应头
-		    res.setHeader('Content-Type','application/json;charset=utf-8');
-		    let dbo = db.db("krry_shop");
-		    //根据用户名查询一条数据，看看是否数据库已经存在这个用户名
-		    dbo.collection("user").find({'username':user.username}).toArray((err, result)=>{ // 返回集合中所有数据
-		        if (err) throw err;
-		        //若存在此用户名，响应重新输入用户名
-		        if(result.length != 0){
-		        	res.end('errorRepeat');
-		        }else{
-		        	//不存在此用户名，可注册
-		        	let myobj = {
-				    	'username':user.username,
-				    	'phone':user.phone,
-				    	'password':user.password,
-				    	'createTime':new Date().toLocaleDateString()
-				    };
-				    dbo.collection("user").insertOne(myobj, (err, suc)=>{
-				        if (err) throw err;
-						//发送响应数据，发送登录用户id和用户名到前台，放进sessionStorage
-						res.end(JSON.stringify({'id':suc.insertedId,'username':user.username}));
-				        db.close();
-				    });
-		        }
-		    });
-		});
+
+	    //设置响应头
+	    res.setHeader('Content-Type','application/json;charset=utf-8');
+	    //根据用户名查询一条数据，看看是否数据库已经存在这个用户名
+	    dbo.collection("user").find({'username':user.username}).toArray((err, result)=>{ // 返回集合中所有数据
+	        if (err) throw err;
+	        //若存在此用户名，响应重新输入用户名
+	        if(result.length != 0){
+	        	res.end('errorRepeat');
+	        }else{
+	        	//不存在此用户名，可注册
+	        	let myobj = {
+			    	'username':user.username,
+			    	'phone':user.phone,
+			    	'password':user.password,
+			    	'createTime':new Date().toLocaleDateString()
+			    };
+			    dbo.collection("user").insertOne(myobj, (err, suc)=>{
+			        if (err) throw err;
+					//发送响应数据，发送登录用户id和用户名到前台，放进sessionStorage
+					res.end(JSON.stringify({'id':suc.insertedId,'username':user.username}));
+			    });
+	        }
+	    });
 	});
 });
 
@@ -246,28 +243,22 @@ app.post('/loginUser', (req, res)=> {
 	//结束读取
 	req.on('end',()=>{
 		let user = JSON.parse(body); //json解析post的数据，是user对象
-		MongoClient.connect(mogourl, (err, db)=> {
-		    if (err) throw err;
-		    let dbo = db.db("krry_shop");
-		    //根据用户名查询一条数据
-		    dbo.collection("user").find({'username':user.username}).toArray((err, result)=>{ // 返回集合中所有数据
-		        if (err) throw err;
-		        res.setHeader('Content-Type','application/json;charset=utf-8');
-		        //若存在此用户名，验证密码是否正确
-		        if(result.length != 0){
-		        	//返回的result是一个数组对象，取出第一个数组元素
-		        	result = result[0];
-		        	//成功登录
-		        	if(result.password == user.password) res.end(JSON.stringify({'id':result._id,'username':result.username}));
-		        	//密码错误
-		        	else res.end('errorCode');
-		        }
-		        //用户不存在  前台 result.length == 0 表示查询无果，用户不存在
-		        res.end(JSON.stringify(result));
-				
-		        db.close();
-		    });
-		});
+	    //根据用户名查询一条数据
+	    dbo.collection("user").find({'username':user.username}).toArray((err, result)=>{ // 返回集合中所有数据
+	        if (err) throw err;
+	        res.setHeader('Content-Type','application/json;charset=utf-8');
+	        //若存在此用户名，验证密码是否正确
+	        if(result.length != 0){
+	        	//返回的result是一个数组对象，取出第一个数组元素
+	        	result = result[0];
+	        	//成功登录
+	        	if(result.password == user.password) res.end(JSON.stringify({'id':result._id,'username':result.username}));
+	        	//密码错误
+	        	else res.end('errorCode');
+	        }
+	        //用户不存在  前台 result.length == 0 表示查询无果，用户不存在
+	        res.end(JSON.stringify(result));
+	    });
 	});
 })
 

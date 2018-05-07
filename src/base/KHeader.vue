@@ -13,7 +13,6 @@
 						</router-link>
 					</li>
 					<li>
-						
 						<router-link to="#">
 							<i class="iconfont icon-leimupinleifenleileibie2"></i>
 							分类
@@ -26,7 +25,7 @@
 						</router-link>
 					</li>
 					<li>
-						<router-link to="#">
+						<router-link :to="this.$store.state.username ? {name:'admin',params:{username:this.$store.state.username}} : '/login'">
 							<i class="iconfont icon-gerenzhongxin"></i>
 							个人中心
 						</router-link>
@@ -36,7 +35,9 @@
 			<div class="right">
 				<div v-if="this.$store.state.username">
 					<span>欢迎：</span>
-					<router-link to="#" class="r_logins">{{this.$store.state.username}}</router-link>
+					<router-link :to="{name:'admin',params:{username:this.$store.state.username}}" class="r_logins">
+						{{this.$store.state.username}}
+					</router-link>
 					<span class="r_button" @click="loginout">退出</span>
 				</div>
 				<div v-if="!this.$store.state.username">
@@ -60,6 +61,7 @@
 			loginout(){
 				//询问框
 				layer.confirm('您确定退出登录？', {
+					title: '乐诗提醒',
 				  btn: ['确定','取消'] //按钮
 				}, ()=>{
 				  //确定退出登录
@@ -143,6 +145,7 @@
 	}
 	.header .right .r_button{
 		margin-left: 10px;
+		cursor: url(../assets/link.cur),pointer;
 	}
 	.header .right .r_button:hover{
 		color:red;
