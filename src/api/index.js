@@ -39,9 +39,14 @@ export let detectCar = (shopId,userId)=>{
 	return axios.get(`/detectCar?shopId=${shopId}&userId=${userId}`);
 }
 
-// 获取一条商品数据和检测是否加入购物车的封装all
+// 获取一条商品数据、检测是否加入购物车的封装all
 export let getDeAll = (shopId,userId)=>{
 	return axios.all([getDetail(shopId),detectCar(shopId,userId)]);
+}
+
+//进入个人中心（查询自己发表的商品）
+export let myShop = (userId)=>{
+	return axios.get(`/myShop?userId=${userId}`);
 }
 
 
@@ -59,3 +64,19 @@ export let shopCar = (userId)=>{
 export let deleteShop = (id)=>{
 	return axios.get(`/deleteShop?id=${id}`);
 }
+
+//添加商品
+export let add = (data)=>{
+	return axios.post('/add',data);
+}
+
+//删除一个商品（参数：shop中数据id）
+export let removeMyShop = (id)=>{
+	return axios.get(`/removeMyShop?id=${id}`);
+}
+
+//修改一个商品
+export let modifyShop = (data)=>{
+	return axios.post('/modifyShop',data);
+}
+

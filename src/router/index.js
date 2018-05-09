@@ -22,25 +22,43 @@ export default new Router({
   	{
       path:'/home',
       component:()=>import('../components/Home.vue'),
-      meta:{keepAlive:true,title:'首页'}
+      meta:{title:'首页'}
     },
     {
       path:'/category/:bid',
       component:()=>import('../components/Category.vue'),
       name:"category",
-      meta:{keepAlive:true,title:'分类'}
+      meta:{title:'分类商品'}
     },
     {
       path:'/detail/:bid',
       component:()=>import('../components/Detail.vue'),
       name:"detail",
-      meta:{title:'详细'}
+      meta:{title:'商品详细'}
     },
     {
       path:'/admin/:username',
       component:()=>import('../components/Admin.vue'),
       name:"admin",
       meta:{title:'个人中心'}
+    },
+    {
+      path:'/add/:username',
+      component:()=>import('../components/AddShop.vue'),
+      name:"add",
+      meta:{title:'添加商品'}
+    },
+    {
+      path:'/modify/:bid',
+      component:()=>import('../components/ModifyShop.vue'),
+      name:"modify",
+      meta:{title:'修改商品'}
+    },
+    {
+      path:'/car/:username',
+      component:()=>import('../components/shopCar.vue'),
+      name:"car",
+      meta:{title:'我的购物车'}
     },
   	{
       path:'*',

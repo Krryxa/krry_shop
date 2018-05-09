@@ -40,7 +40,10 @@
 			return {msg:'hello'}
 		},
 		created(){
-
+			
+		},
+		mounted(){
+			$(".carousel").carousel();
 		},
 		methods:{},
 		computed:{},

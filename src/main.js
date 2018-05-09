@@ -20,6 +20,7 @@ Vue.config.productionTip = false
 
 //在进入路由之前， 每一次都会执行此方法  全局钩子
 router.beforeEach(function(from,to,next){
+  //设置网页标题
 	document.title = from.meta.title;
   //设置是否已登录
   let userObj = JSON.parse(sessionStorage.getItem('user'));

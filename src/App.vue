@@ -24,6 +24,10 @@ export default {
 	a:hover{text-decoration: none;color:#dd5862 !important;transition: .3s !important;}
 	img{vertical-align: middle;}
 	button{cursor:url(./assets/link.cur),pointer !important;}
+	button:focus{
+	  outline:none !important;
+	  border:none !important;
+	}
 	input,button{outline:none;}
 	.clear{clear:both;}
 	.content{width:960px;margin: 0 auto;position: relative;height: 100%;}
@@ -33,4 +37,6 @@ export default {
 	.overflow1{ overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
 	/* 超出两行省略 */
 	.overflow2{display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;overflow: hidden;}
+	.right{float:right;}
+	.left{float:left;}
 </style>

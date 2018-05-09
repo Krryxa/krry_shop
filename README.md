@@ -232,4 +232,21 @@ async getDeAll(){
 },
 ```
 
+
+## MongoDB尽量避免关联数据，关联的数据量少的时候，可以这样做：
+- 在shop集合中保存着userId、username，在查询shop表的数据时，直接全部查询出来（包括用户名），不做关联查询。
+- 当user集合中的username修改时，修改后要把shop表中对应userId的全部username修改成当前修改的username。
+- 这样可保持shop表中的username与user集合中的username一致，而不进行关联。
+- 同样的，当shop集合中的商品信息修改时，要把shopCar集合中的商品信息对应shopId的全部数据同步修改成当前的商品信息数据
+
+
+## 删除shop集合中的商品信息
+- 根据id删除
+- 然后还要在shopCar中删除与shopId对应的商品信息
+
+## 修改shop集合中的商品信息
+- 根据id修改
+- 然后还要在shopCar中修改与shopId对应的商品信息
+
+
 ## 拦截器，未登录不能访问admin，登陆后只能访问自己的admin

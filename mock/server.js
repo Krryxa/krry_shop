@@ -46,7 +46,7 @@ app.all('*', (req, res, next)=>{
     else next();
 });
 
-// 查询最新数据 
+//查询最新数据 
 app.get('/newshop', (req, res)=> {
     let newShop = "";
 
@@ -59,7 +59,6 @@ app.get('/newshop', (req, res)=> {
 		//发送响应数据
 		res.end(JSON.stringify(newShop));
     });
-
 });
 
 // 查询分类数据
@@ -67,30 +66,19 @@ app.get('/category', (req, res)=> {
 	let {query} = url.parse(req.url,true);//true把query转化成对象
     let id = parseInt(query.bid); //取出的是字符串，取出路径中的参数
 	let cateShop = "";
-	let queryCate = "";
+	let queryCate = {"kindId":id};
 	//如果是0，则查询全部数据
 	if(id == 0){
-	    //查询最新的8条数据
-	    dbo.collection("shop").find().toArray((err, result)=>{ // 返回集合中所有数据
-	        if (err) throw err;
-	        //将查询出来的数据保存到变量中，查询最新的数据，后面插入的数据越新
-	        cateShop = result.reverse();
-	        res.setHeader('Content-Type','application/json;charset=utf-8');
-			//发送响应数据
-			res.end(JSON.stringify(cateShop));
-	    });
-	}else{
-		//否则查询相关类别的数据
-	    //查询最新的8条数据
-	    dbo.collection("shop").find({"kindId":id}).toArray((err, result)=>{ // 返回集合中所有数据
-	        if (err) throw err;
-	        //将查询出来的数据保存到变量中，查询最新的数据，后面插入的数据越新
-	        cateShop = result.reverse();
-	        res.setHeader('Content-Type','application/json;charset=utf-8');
-			//发送响应数据
-			res.end(JSON.stringify(cateShop));
-	    });
+	    queryCate = {};
 	}
+	dbo.collection("shop").find(queryCate).toArray((err, result)=>{ // 返回集合中所有数据
+        if (err) throw err;
+        //将查询出来的数据保存到变量中，查询最新的数据，后面插入的数据越新
+        cateShop = result.reverse();
+        res.setHeader('Content-Type','application/json;charset=utf-8');
+		//发送响应数据
+		res.end(JSON.stringify(cateShop));
+    });
 });
 
 //根据id查询某一条商品数据
@@ -104,9 +92,7 @@ app.get('/detail', (req, res)=> {
         res.setHeader('Content-Type','application/json;charset=utf-8');
 		//发送响应数据
 		res.end(JSON.stringify(result[0])); //取一个数据，只有一个数据
-
     });
-
 });
 
 
@@ -156,14 +142,121 @@ app.post('/addShop', (req, res)=> {
 	    dbo.collection("shopCar").insertOne(myobj, (err, suc)=>{
 	        if (err) throw err;
 	        //发送响应数据
-			res.end('success'); //取一个数据，只有一个数据
+			res.end('success');
+	    });
+	});
+});
+
+
+//进入个人中心，查询自己发表的商品
+app.get('/myShop',(req,res)=>{
+	let {query} = url.parse(req.url,true);//true把query转化成对象
+    let userId = query.userId; //取出的是字符串
+
+    //查询自己发表的商品
+    dbo.collection("shop").find({'userId':userId}).toArray((err, result)=>{ // 返回集合中所有数据
+        if (err) throw err;
+        res.setHeader('Content-Type','application/json;charset=utf-8');
+		//发送响应数据
+		res.end(JSON.stringify(result.reverse()));
+    });
+});
+
+
+//添加商品
+app.post('/add', (req, res)=> {
+	let body = '';
+	//读取数据
+	req.on('data',chunk=>{
+		body += chunk; //读取请求体
+	});
+	//结束读取
+	req.on('end',()=>{
+		let shop = JSON.parse(body); //json解析post的数据
+
+	    //设置响应头
+	    res.setHeader('Content-Type','application/json;charset=utf-8');
+	    //设置存储的购物车的信息
+    	let myobj = {
+	    	'userId':shop.userId, //用户Id
+	    	'username':shop.username, //用户名
+	    	'desc':shop.desc,//商品描述
+	    	'kindId':shop.kindId, //商品分类Id
+	    	'kind':shop.kind,//商品分类
+	    	'price':shop.price, //商品单价
+	    	'img':shop.img, //商品图片地址
+	    	'createTime':new Date().toLocaleDateString()
+	    };
+	    //插入一条数据
+	    dbo.collection("shop").insertOne(myobj, (err, suc)=>{
+	        if (err) throw err;
+	        //发送响应数据
+			res.end('success');
+	    });
+	});
+});
+
+
+//删除自己发表的一件商品
+app.get('/removeMyShop',(req,res)=>{
+	let {query} = url.parse(req.url,true);//true把query转化成对象
+    let id = query.id; //取出的是字符串
+
+    //删除购物车中的一件商品
+    dbo.collection("shop").deleteOne({_id:ObjectID(id)}, (err, obj)=>{
+        if (err) throw err;
+        //删除购物车对应的商品信息
+        dbo.collection("shopCar").deleteMany({'shopId':id}, (err2, obj2)=>{
+        	if (err2) throw err2;
+        	res.end('success');
+        });
+    });
+
+});
+
+
+//修改自己发表的商品信息
+app.post('/modifyShop', (req, res)=> {
+	let body = '';
+	//读取数据
+	req.on('data',chunk=>{
+		body += chunk; //读取请求体
+	});
+	//结束读取
+	req.on('end',()=>{
+		let shop = JSON.parse(body); //json解析post的数据
+
+	    //设置响应头
+	    res.setHeader('Content-Type','application/json;charset=utf-8');
+	    //设置存储的商品信息
+    	let myobj = {$set:{
+	    	'desc':shop.desc,//商品描述
+	    	'kindId':shop.kindId, //商品分类Id
+	    	'kind':shop.kind,//商品分类
+	    	'price':shop.price, //商品单价
+	    	'img':shop.img //商品图片地址
+	    }};
+	    //设置存储的购物车的信息
+    	let myCar = {$set:{
+	    	'shopName':shop.desc,//商品描述
+	    	'shopPrice':shop.price, //商品单价
+	    	'shopImg':shop.img //商品图片地址
+	    }};
+	    //根据id修改shop集合中的商品信息
+	    dbo.collection("shop").updateOne({_id:ObjectID(shop.id)}, myobj, (err1, res1)=>{
+	        if (err1) throw err1;
+	    	//根据shopId全部修改shopCar中的商品信息
+	        dbo.collection("shopCar").updateMany({'shopId':shop.id}, myCar, (err2, res2)=>{
+		        if (err2) throw err2;
+		        res.end('success');
+		    });
 	    });
 	});
 });
 
 
 
-//进入购物车（个人中心）
+//进入购物车
 app.get('/shopCar',(req,res)=>{
 	let {query} = url.parse(req.url,true);//true把query转化成对象
     let userId = query.userId; //取出的是字符串
@@ -173,7 +266,7 @@ app.get('/shopCar',(req,res)=>{
         if (err) throw err;
         res.setHeader('Content-Type','application/json;charset=utf-8');
 		//发送响应数据
-		res.end(JSON.stringify(result.reverse())); //取一个数据，只有一个数据
+		res.end(JSON.stringify(result.reverse()));
     });
 
 });
@@ -184,11 +277,10 @@ app.get('/deleteShop',(req,res)=>{
 	let {query} = url.parse(req.url,true);//true把query转化成对象
     let id = query.id; //取出的是字符串
 
-    //查询购物车信息
+    //删除购物车中的一件商品
     dbo.collection("shopCar").deleteOne({_id:ObjectID(id)}, (err, obj)=>{
         if (err) throw err;
         res.end('success');
-
     });
 
 });

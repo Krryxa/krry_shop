@@ -2,7 +2,7 @@
 	<div class="header">
 		<div class="content">
 			<div class="left">
-				<router-link to="home" class="h_a">
+				<router-link to="/home" class="h_a">
 					<img src="../assets/krrylogo.png" width="60">
 				</router-link>
 				<ul class="nav">
@@ -12,11 +12,19 @@
 							首页
 						</router-link>
 					</li>
-					<li>
-						<router-link to="#">
+					<li class="lli">
+						<a>
 							<i class="iconfont icon-leimupinleifenleileibie2"></i>
-							分类
-						</router-link>
+							分类商品
+						</a>
+						<div class="lli_div">
+							<router-link :to="{name:'category',params:{bid:1}}">电子产品</router-link>
+							<router-link :to="{name:'category',params:{bid:2}}">衣物鞋包</router-link>
+							<router-link :to="{name:'category',params:{bid:3}}">美妆个护</router-link>
+							<router-link :to="{name:'category',params:{bid:4}}">饮食酒类</router-link>
+							<router-link :to="{name:'category',params:{bid:5}}">医药保健</router-link>
+							<router-link :to="{name:'category',params:{bid:6}}">图书音像</router-link>
+						</div>
 					</li>
 					<li>
 						<router-link :to="{name:'category',params:{bid:0}}">
@@ -57,6 +65,14 @@
 		created(){
 
 		},
+		//在挂载到实例上去之后,dom渲染结束，可以操作dom了，一些dom操作也可以放在这里
+		mounted(){
+			$(".lli").hover(()=>{
+				$(".lli_div").stop().slideDown(300);
+			},()=>{
+				$(".lli_div").stop().slideUp(300);
+			});
+		},
 		methods:{
 			loginout(){
 				//询问框
@@ -70,6 +86,8 @@
 				  //全局状态的用户名设为false
 				  this.$store.commit(Types.SETUSERNAME,false);
 				  layer.msg('成功退出', {icon: 1});
+				  //跳转到首页
+				  this.$router.push('/home');
 				}, ()=>{
 				  //取消
 				  
@@ -81,6 +99,10 @@
 	}
 </script>
 <style type="text/css" scoped>
+	.router-link-active{
+		color: #dd5862 !important;
+		text-decoration: none;
+	}
 	.header{
 		background: #F2F2F2;
 		color: #2d2d2d;
@@ -149,5 +171,11 @@
 	}
 	.header .right .r_button:hover{
 		color:red;
+	}
+	.lli_div{
+		display: none;
+	}
+	.lli_div a{
+		text-align: center;
 	}
 </style>

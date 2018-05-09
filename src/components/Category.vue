@@ -4,7 +4,7 @@
 		<!-- 获取路由路径上的参数{{$route.params.bid}} -->
 		<div class="content">
 			<div class="c_hea">
-				<span class="c_h_title">分类</span>
+				<span class="c_h_title">{{categoryName}}</span>
 				<div class="v_ttmore">
 			 		<router-link :to="{name:'category',params:{bid:1}}">电子产品</router-link>
 			 		<router-link :to="{name:'category',params:{bid:2}}">衣物鞋包</router-link>
@@ -54,7 +54,8 @@
 	import {getCateShop} from '../api/index.js';
 	export default{
 		data(){
-			return {cateShop:[],loading:true}
+			return {cateNames:['全部商品','电子产品','衣物鞋包','美妆个护','饮食酒类','医药保健','图书音像'],
+				cateShop:[],loading:true}
 		},
 		created(){
 			this.getCateShop();
@@ -69,11 +70,14 @@
 		computed:{
 			bid(){
 				return this.$route.params.bid; //将路径上的id映射到bid上
+			},
+			categoryName(){
+				return this.cateNames[this.bid]; //获取当前内容的类型名称
 			}
 		},
 		watch:{
+			//监听路由变化的时候
 			'$route'(to,from){
-				console.log(to.path+"==="+from.path);
 				this.loading = true;
 				this.getCateShop();
 			},
@@ -86,6 +90,10 @@
 	}
 </script>
 <style type="text/css" scoped>
+	.router-link-active{
+		color: #dd5862 !important;
+		text-decoration: none;
+	}
 	.c_hea{
 		margin-top: 50px;
 	    height: 55px;
