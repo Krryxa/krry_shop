@@ -11,7 +11,7 @@
 				<p class="shop_lable">图片链接</p>
 				<input type="text" v-model="shop.img">
 				<p class="shop_lable">商品单价</p>
-				<input type="number" v-model.number="shop.price">
+				<input type="number" step="0.01" v-model.number="shop.price">
 				<p class="shop_lable">商品分类</p>
 				<select v-model="shop.kind">
 				    <option disabled selected="true">请选择分类</option>

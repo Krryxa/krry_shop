@@ -3,6 +3,9 @@
 		<KHeader></KHeader>
 		<div class="content">
 			<div class="row">
+				<router-link :to="{name:'add',params:{username:this.$store.state.username}}" class="noshop" v-if="noShop">
+					您还没有发布任何商品哦~
+				</router-link>
 				<table class="table table-hover table-bordered">
 					<caption style="color:#e25d0c;" class="h2 text-center">
 						<p>{{this.$store.state.username}} 的中心</p>
@@ -52,9 +55,10 @@
 	import {myShop,removeMyShop} from '../api/index.js';
 	export default{
 		data(){
-			return {shops:[],loading:true,userId:""}
+			return {shops:[],loading:true,userId:"",noShop:false}
 		},
 		created(){
+			//查询自己发布的商品
 			this.mySearShop();
 		},
 		methods:{
@@ -63,6 +67,8 @@
 				//获取用户id
 				this.userId = user.id;
 				this.shops = await myShop(this.userId);
+				//如果没有查到，没有发表商品，显示提示信息
+				if(this.shops.length == 0) this.noShop = true;
 				this.loading = false;
 			},
 			//删除购物车的商品之前
@@ -88,6 +94,8 @@
 					layer.closeAll('loading');
 					layer.msg('成功删除', {icon: 1});
 					this.shops = await myShop(this.userId);
+					//如果没有查到，没有发表商品，显示提示信息
+					if(this.shops.length == 0) this.noShop = true;
 				}
 			},
 		},
@@ -102,6 +110,22 @@
 	}
 </script>
 <style scoped>
+	.row{
+		min-height: 430px;
+		width: 960px;
+    	margin: 0 auto;
+	}
+	.noshop{
+		position: absolute;
+	    font-size: 32px;
+	    margin-top: 130px;
+	    text-align: center;
+	    top: 150px;
+	    width: 100%;
+	    background: -webkit-gradient(linear,left top,left bottom,from(#f1770c),to(#fb2e00));
+	    -webkit-background-clip: text;
+	    -webkit-text-fill-color: transparent;
+	}
 	.pro_check{
 		line-height: 100px;
     	text-align: center;

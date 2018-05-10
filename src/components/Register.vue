@@ -4,10 +4,10 @@
 			<div class="container">
 				<h1>Welcome</h1>
 				<form class="form">
-					<input type="text" placeholder="用户名" v-model="user.username">
-					<input type="text" placeholder="手机号码" v-model.number="user.phone">
-					<input type="password" placeholder="密码" v-model="user.password">
-					<input type="password" placeholder="确认密码" v-model="user.repassword">
+					<input type="text" placeholder="用户名" maxlength="10" v-model="user.username">
+					<input type="text" placeholder="手机号码" maxlength="11" v-model.number="user.phone">
+					<input type="password" placeholder="密码" maxlength="12" v-model="user.password">
+					<input type="password" placeholder="确认密码" maxlength="12" v-model="user.repassword">
 					<button type="button" id="login-button" @click="flag && beforeAdd()">{{msg}}</button>
 				</form>
 				<span class="c_back" @click="goback">返回</span>

@@ -99,10 +99,6 @@
 	}
 </script>
 <style type="text/css" scoped>
-	.router-link-active{
-		color: #dd5862 !important;
-		text-decoration: none;
-	}
 	.header{
 		background: #F2F2F2;
 		color: #2d2d2d;

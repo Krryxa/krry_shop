@@ -41,6 +41,7 @@
 			}
 		},
 		created(){
+			//修改时先获取商品信息
 			this.getDetailShop();
 		},
 		methods:{

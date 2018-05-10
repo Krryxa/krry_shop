@@ -7,9 +7,12 @@
 			<!-- default：灰色 success：绿色 danger：红色  warning：警告色 info：浅蓝色 primary：蓝色 -->
 			<!-- 每一行又拥有12列 -->
 			<div class="row">
+				<router-link :to="{name:'category',params:{bid:0}}" class="noshop" v-if="noShop">
+					购物车空空，快去淘淘吧~
+				</router-link>
 				<table class="table table-hover table-bordered">
 					<caption style="color:#e25d0c;" class="h2 text-center">
-						<p>{{this.$store.state.username}} 购物车</p>
+						<p>{{this.$store.state.username}} 的购物车</p>
 						<button class="btn-success btn left" @click="back">返回中心</button>
 					</caption>
 					<Loading v-if="loading"></Loading>
@@ -19,12 +22,12 @@
 							<th style="width: 80px;">
 								<span>全选</span>
 								<input style="margin-left: 12px;" type="checkbox" v-model="checkAll">
-							</th style="width:500px;">
-							<td>商品</td>
+							</th>
+							<td style="width:500px;">商品</td>
 							<td>单价</td>
 							<td>数量</td>
 							<td>小计</td>
-							<td>操作</td>
+							<td style="width:100px;">操作</td>
 						</tr>
 					</thead>
 					<tbody v-if="!loading">
@@ -44,7 +47,7 @@
 							<td class="pro_line pricess">{{product.shopPrice*product.shopCount | toFixed(2)}}</td>
 							<td class="pro_line"><button class="btn btn-danger" @click="beforeRemove(product._id)">删除</button></td>
 						</tr>
-						<tr>
+						<tr v-if="!noShop">
 							<!-- {{sum()}} 数据一变化，就会算出总价格，不会缓存上一次的结果
 							computed 可以解决这个问题 -->
 							<td class="pro_sum" colspan="6">总价格：
@@ -68,14 +71,13 @@
 	import {shopCar,deleteShop} from '../api/index.js';
 	export default{
 		data(){
-			return {shops:[],loading:true,userId:""}
+			return {shops:[],loading:true,userId:"",noShop:false,}
 		},
 		//可以有自定义过滤器
 		filters:{
 			//这里的this指向window
 			//第一个参数input是管道符前面的值，往后的参数是调用时的参数
 			toFixed(input,param1){
-				console.log(input)
 				return '￥'+input.toFixed(param1); //保留两位小数
 			}
 		},
@@ -87,6 +89,8 @@
 				let user = JSON.parse(sessionStorage.getItem('user'));
 				this.userId = user.id;
 				this.shops = await shopCar(this.userId);
+				//如果没有查到，没有发表商品，显示提示信息
+				if(this.shops.length == 0) this.noShop = true;
 				this.loading = false;
 			},
 			//删除购物车的商品之前
@@ -112,6 +116,8 @@
 					layer.closeAll('loading');
 					layer.msg('成功移除', {icon: 1});
 					this.shops = await shopCar(this.userId);
+					//如果没有查到，没有发表商品，显示提示信息
+					if(this.shops.length == 0) this.noShop = true;
 				}
 			},
 			back(){
@@ -147,6 +153,22 @@
 	}
 </script>
 <style scoped>
+	.row{
+		min-height: 430px;
+		width: 960px;
+    	margin: 0 auto;
+	}
+	.noshop{
+		position: absolute;
+	    font-size: 32px;
+	    margin-top: 130px;
+	    text-align: center;
+	    top: 150px;
+	    width: 100%;
+	    background: -webkit-gradient(linear,left top,left bottom,from(#f1770c),to(#fb2e00));
+	    -webkit-background-clip: text;
+	    -webkit-text-fill-color: transparent;
+	}
 	.pro_check{
 		line-height: 100px;
     	text-align: center;
