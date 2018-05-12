@@ -43,19 +43,19 @@ export default new Router({
       meta:{title:'个人中心'}
     },
     {
-      path:'/add/:username',
+      path:'/admin/add/:username',
       component:()=>import('../components/AddShop.vue'),
       name:"add",
       meta:{title:'添加商品'}
     },
     {
-      path:'/modify/:bid',
+      path:'/admin/modify/:bid',
       component:()=>import('../components/ModifyShop.vue'),
       name:"modify",
       meta:{title:'修改商品'}
     },
     {
-      path:'/car/:username',
+      path:'/admin/car/:username',
       component:()=>import('../components/shopCar.vue'),
       name:"car",
       meta:{title:'我的购物车'}

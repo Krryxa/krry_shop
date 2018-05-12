@@ -71,7 +71,7 @@
 	import {shopCar,deleteShop} from '../api/index.js';
 	export default{
 		data(){
-			return {shops:[],loading:true,userId:"",noShop:false,}
+			return {shops:[],loading:true,userId:"",noShop:false}
 		},
 		//可以有自定义过滤器
 		filters:{
