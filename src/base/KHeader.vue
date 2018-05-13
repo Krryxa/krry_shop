@@ -77,6 +77,7 @@
 			loginout(){
 				//询问框
 				layer.confirm('您确定退出登录？', {
+					skin: 'layui-layer-lan', //样式类名
 					title: '乐诗提醒',
 				  btn: ['确定','取消'] //按钮
 				}, ()=>{

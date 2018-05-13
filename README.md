@@ -6,6 +6,27 @@
 - vue + node.js + express框架
 - MongoDB数据库
 
+## 记录开发过程中遇到的问题和解决方法
+
+## vue搭建脚手架、工具
+```
+vue init webpack krry_shop
+npm install axios vuex bootstrap 
+```
+- vue项目打包
+```
+npm run build
+```
+
+## 目录结构
+- mock 服务端
+- api 配置所有的接口
+- assets 资源文件
+- base 基础组件
+- components 页面组件
+- router 路由配置
+- store vuex配置
+
 ## css的一些问题
 - css3:nth-child()伪类选择器
 - :nth-child(number) 直接匹配第number个元素。参数number必须为大于0的整数
@@ -250,3 +271,27 @@ async getDeAll(){
 
 
 ## 拦截器，未登录不能访问admin，登陆后只能访问自己的admin
+在全局钩子设置
+```
+//在进入路由之前， 每一次都会执行此方法  全局钩子
+router.beforeEach(function(to,from,next){
+  //设置网页标题
+	document.title = to.meta.title;
+  //设置是否已登录
+  let userObj = JSON.parse(sessionStorage.getItem('user'));
+  if(userObj){
+    //执行方法，将用户名设置进全局参数  vuex
+    //提交mutation的Types.SETUSERNAME方法
+    //第二个参数是携带的参数
+    //main.js使用vuex的提交方法，不需要this.$store.commit()，直接就store.commit()
+    store.commit(Types.SETUSERNAME,userObj.username);
+  }else{
+    //如果未登录，想要进入admin目录，则自动跳回首页
+    if(to.path.indexOf('admin') != -1){
+      alert("进了");
+      router.push({name:'home'});
+    }
+  }
+	next(); //继续往下走
+});
+```

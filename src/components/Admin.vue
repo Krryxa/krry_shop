@@ -75,6 +75,7 @@
 			beforeRemove(id){
 				//询问框
 				layer.confirm('您确定删除这个商品？', {
+					skin: 'layui-layer-lan', //样式类名
 					title: '乐诗提醒',
 				  	btn: ['确定','取消'] //按钮
 				},()=>{

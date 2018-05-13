@@ -19,9 +19,9 @@ import './assets/css/layer.css';
 Vue.config.productionTip = false
 
 //在进入路由之前， 每一次都会执行此方法  全局钩子
-router.beforeEach(function(from,to,next){
+router.beforeEach(function(to,from,next){
   //设置网页标题
-	document.title = from.meta.title;
+	document.title = to.meta.title;
   //设置是否已登录
   let userObj = JSON.parse(sessionStorage.getItem('user'));
   if(userObj){
@@ -30,6 +30,12 @@ router.beforeEach(function(from,to,next){
     //第二个参数是携带的参数
     //main.js使用vuex的提交方法，不需要this.$store.commit()，直接就store.commit()
     store.commit(Types.SETUSERNAME,userObj.username);
+  }else{
+    //如果未登录，想要进入admin目录，则自动跳回首页
+    if(to.path.indexOf('admin') != -1){
+      alert("进了");
+      router.push({name:'home'});
+    }
   }
 	next(); //继续往下走
 });

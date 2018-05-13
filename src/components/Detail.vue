@@ -13,7 +13,7 @@
 					<router-link  class="category" :to="{name:'category',params:{bid:shop.kindId}}">{{shop.kind}}</router-link><br>
 					<div class="username">{{shop.username}}  <i class="iconfont icon-box"></i></div>
 					<button class="intocar" @click="flag && beforeAddShop()">{{intoShop}}</button>
-					<button class="buynow">立即购买</button>
+					<router-link  class="buynow" :to="this.$store.state.username ? {name:'comfirm',params:{bid:shop._id}} : '/login'" tag="button">立即购买</router-link>
 				</div>
 				<div class="clear"></div>
 			</div>
@@ -94,7 +94,7 @@
 					//清除加载动画
 					layer.closeAll('loading');
 				} 
-			}
+			},
 		},
 		computed:{
 			bid(){

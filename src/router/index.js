@@ -4,6 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
+  mode:'history',
   routes: [
   	{
       path:'/',
@@ -22,6 +23,7 @@ export default new Router({
   	{
       path:'/home',
       component:()=>import('../components/Home.vue'),
+      name:"home",
       meta:{title:'首页'}
     },
     {
@@ -35,6 +37,12 @@ export default new Router({
       component:()=>import('../components/Detail.vue'),
       name:"detail",
       meta:{title:'商品详细'}
+    },
+    {
+      path:'/admin/comfirm/:bid',
+      component:()=>import('../components/ComfirmOrder.vue'),
+      name:"comfirm",
+      meta:{title:'确认订单'}
     },
     {
       path:'/admin/:username',

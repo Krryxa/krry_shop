@@ -13,7 +13,7 @@
 				<table class="table table-hover table-bordered">
 					<caption style="color:#e25d0c;" class="h2 text-center">
 						<p>{{this.$store.state.username}} 的购物车</p>
-						<button class="btn-success btn left" @click="back">返回中心</button>
+						<router-link :to="{name:'admin',params:{username:this.$store.state.username}}" class="btn-success btn left" tag="button">返回中心</router-link>
 					</caption>
 					<Loading v-if="loading"></Loading>
 					<thead v-if="!loading">
@@ -52,7 +52,7 @@
 							computed 可以解决这个问题 -->
 							<td class="pro_sum" colspan="6">总价格：
 								<span class="pricess">{{sum | toFixed(2)}}</span>
-								<button class="pro_submit btn btn-warning">提交订单</button>
+								<button class="pro_submit btn btn-warning" @click="submitOrder">提交订单</button>
 							</td>
 						</tr>
 					</tbody>
@@ -97,6 +97,7 @@
 			beforeRemove(id){
 				//询问框
 				layer.confirm('您确定从购物车移除这个商品？', {
+					skin: 'layui-layer-lan', //样式类名
 					title: '乐诗提醒',
 				  	btn: ['确定','取消'] //按钮
 				},()=>{
@@ -120,9 +121,25 @@
 					if(this.shops.length == 0) this.noShop = true;
 				}
 			},
-			back(){
-				//返回一级
-				this.$router.go(-1);
+			//提交订单
+			submitOrder(){
+				let sumDesc = '';
+				this.shops.forEach((item)=>{
+					if(item.isSelected){
+						sumDesc += item.shopName+' X'+item.shopCount+'<br>';
+					} 
+				});
+				layer.open({
+					skin: 'layui-layer-lan', //样式类名
+				  	title: '您的订单',
+				  	content: '您购买了<br>'+sumDesc+'<br>总金额：￥'+this.sum+'<br>我跟你讲，你买不起',
+				  	cancel:()=>{
+				  		layer.msg('亲，点确定啦~');
+				  	},
+				  	yes:()=>{
+				  		layer.msg('亲，等着收货吧~');
+				  	},
+				});
 			}
 		},
 		computed:{
