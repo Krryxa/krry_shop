@@ -8,8 +8,8 @@
 
 
 ## 项目截图
-![](https://github.com/Krryxa/krry_shop/blob/master/cutImg/1.jpg)
-![](https://github.com/Krryxa/krry_shop/blob/master/cutImg/2.jpg)
+![](https://github.com/Krryxa/krry_shop/blob/master/cutImg/1.jpg)<br><br><br>
+![](https://github.com/Krryxa/krry_shop/blob/master/cutImg/2.jpg)<br><br><br>
 ![](https://github.com/Krryxa/krry_shop/blob/master/cutImg/3.jpg)
 
 
