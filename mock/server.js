@@ -18,8 +18,8 @@ let dbo = '';
     dbo = db.db("krry_shop");
     console.log('连接数据库成功');
 });
-
-
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../dist')));
 app.use((req,res,next)=>{
 	// //如果未登录
 	// if (!req.session.user) {
@@ -42,8 +42,11 @@ app.all('*', (req, res, next)=>{
     res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
     res.header("X-Powered-By",' 3.2.1')
+
     if(req.method=="OPTIONS") res.send(200);/*让options请求快速返回*/
     else next();
+
+
 });
 
 //查询最新数据 
@@ -354,9 +357,10 @@ app.post('/loginUser', (req, res)=> {
 	});
 })
 
-var server = app.listen(3000, ()=>{
-  var host = server.address().address
-  var port = server.address().port
+let server = app.listen(2000, ()=>{
+  let host = server.address().address;
+  let port = server.address().port;
+
  
   console.log("应用实例，访问地址为 http://", host, port)
  

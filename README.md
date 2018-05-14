@@ -272,7 +272,7 @@ async getDeAll(){
 
 ## 拦截器，未登录不能访问admin，登陆后只能访问自己的admin
 在全局钩子设置
-```
+```javascript
 //在进入路由之前， 每一次都会执行此方法  全局钩子
 router.beforeEach(function(to,from,next){
   //设置网页标题
@@ -294,4 +294,12 @@ router.beforeEach(function(to,from,next){
   }
 	next(); //继续往下走
 });
+```
+
+## 项目部署
+- 运行npm run build打包生成dist文件夹
+- 使用了express作为服务器，在server.js中添加下方代码，添加dist依赖
+```javascript
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../dist')));
 ```
