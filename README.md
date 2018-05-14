@@ -8,9 +8,9 @@
 
 
 ## 项目截图
-![](https://github.com/Krryxa/krry_shop/blob/master/cutImg/1.jpg)
-![](https://github.com/Krryxa/krry_shop/blob/master/cutImg/2.jpg)
-![](https://github.com/Krryxa/krry_shop/blob/master/cutImg/3.jpg)
+![](https://github.com/Krryxa/krry_shop/blob/master/cutImg/1.jpg)<br><br>
+![](https://github.com/Krryxa/krry_shop/blob/master/cutImg/2.jpg)<br><br>
+![](https://github.com/Krryxa/krry_shop/blob/master/cutImg/3.jpg)<br>
 
 
 ## 记录开发过程中遇到的问题和解决方法
