@@ -357,7 +357,7 @@ app.post('/loginUser', (req, res)=> {
 	});
 })
 
-let server = app.listen(2000, ()=>{
+let server = app.listen(3000, ()=>{
   let host = server.address().address;
   let port = server.address().port;
 
