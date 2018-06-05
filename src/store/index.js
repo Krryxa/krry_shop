@@ -10,7 +10,7 @@ const state = {username:false};
 //计算属性
 //返回已登录的用户名
 const getters = {
-	val:(state)=>state.username,
+	val:state => state.username,
 };
 
 import mutations from './mutations.js'
