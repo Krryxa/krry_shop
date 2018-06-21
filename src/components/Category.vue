@@ -19,7 +19,7 @@
 			<div class="listbox">
 				<Loading v-if="loading"></Loading>
 		 		<ul v-if="!loading" class="databox">
-				 	<li class="items" v-for="shop in cateShop">
+				 	<li class="items" v-for="(shop,index) in cateShop" :key="index">
 						<router-link class="imgbox pr" :to="{name:'detail',params:{bid:shop._id}}">
 							 <img class="lazy" v-lazy="shop.img" width="210" height="210" style="display: inline;">
 						</router-link>
