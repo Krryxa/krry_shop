@@ -59,5 +59,7 @@
 	}
 </script>
 <style type="text/css" scoped>
-	
+	.carousel-inner .item img{
+		height: 380px !important;
+	}
 </style>
