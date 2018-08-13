@@ -39,7 +39,7 @@
 									<span class="pro_span">{{product.shopName}}</span>
 								</router-link>
 							</td>
-							<td class="pro_line pricess">{{product.shopPrice | toFixed(2)}}</td>
+							<td class="pro_line pricess">{{+product.shopPrice | toFixed(2)}}</td>
 							<!-- .number 使输入框的值变成数字 -->
 							<!-- .lazy：当输入框失去焦点时才更新数据 -->
 							<td><input class="pro_inp" type="number" v-model.number.lazy="product.shopCount" min="1"></td>
@@ -77,7 +77,7 @@
 		filters:{
 			//这里的this指向window
 			//第一个参数input是管道符前面的值，往后的参数是调用时的参数
-			toFixed(input,param1){
+			toFixed(input, param1){
 				return '￥'+input.toFixed(param1); //保留两位小数
 			}
 		},

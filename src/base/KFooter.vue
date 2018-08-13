@@ -11,27 +11,23 @@
 			return {msg:'hello'}
 		},
 		created(){
-
 		},
-		methods:{},
-		computed:{},
-		components:{}
 	}
 </script>
 <style type="text/css" scoped>
 	.footer{
 		background: #222;
-	    border-top: 1px solid #111;
-	    position: relative;
-	    bottom: 0;
-	    min-width: 1200px;
-	    margin-top: 60px;
-	    width: 100%;
-	    
+    border-top: 1px solid #111;
+    position: relative;
+    bottom: 0;
+    min-width: 1200px;
+    margin-top: 60px;
+    width: 100%;
 	}
 	.footer .f_msg{
-		line-height: 200px;
-	    color:#e1e1e1;
-	    text-align: center;
+		line-height: 150px;
+    color:#e1e1e1;
+    text-align: center;
+    margin: 0;
 	}
 </style>

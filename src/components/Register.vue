@@ -32,15 +32,19 @@
 	import {addUser} from '../api/index.js';
 	import * as Types from '../store/mutations-type.js';
 	export default{
-		data(){
-			return {user:{
-				username:'',
-				password:'',
-				repassword:'',
-				phone:''
-			},flag:true,msg:'注册'}
+		data () {
+			return {
+				user: {
+					username:'',
+					password:'',
+					repassword:'',
+					phone:''
+				},
+				flag: true,
+				msg: '注册',
+			}
 		},
-		created(){
+		created () {
 			$('#login-button').click(function(event){
 				event.preventDefault();
 				$('form').fadeOut(500);

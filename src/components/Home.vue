@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div style="position:relative; height:100%">
 		<!-- 头部 -->
 		<KHeader></KHeader>
 		<div class="content box">
@@ -91,25 +91,25 @@
 	}
 	.c_litt_div .c_litt_title{
 		font-size: 24px;
-	    margin-bottom: 19px;
-	    margin-top: 0;
-	    float: left;
+    margin-bottom: 19px;
+    margin-top: 0;
+    float: left;
 	}
 	.c_litt_div .c_litt_title span{
 		border-left: 3px solid #dd5862;
-	    font-size: 18px;
-	    margin-right: 10px;
+    font-size: 18px;
+    margin-right: 10px;
 	}
 	.c_litt_div .v_ttmore{
 		float: right;
 	}
 	.c_litt_div .v_ttmore a{
 		float: left;
-	    display: inline-block;
-	    margin-left: 12px;
-	    margin-top: 4px;
-	    transition: .4s;
-	    color: #7d7d7d;
+    display: inline-block;
+    margin-left: 12px;
+    margin-top: 4px;
+    transition: .4s;
+    color: #7d7d7d;
 	}
 	.c_litt_div .v_ttmore a:hover{
 		color:#dd5862;
@@ -125,12 +125,12 @@
 	}
 	.listbox .items a.imgbox{
 		border-radius: 4px;
-	    overflow: hidden;
-	    display: block;
+    overflow: hidden;
+    display: block;
 	}
 	.listbox .items a.imgbox .lazy{
-	    border-radius: 4px;
-	    transition: .8s;
+    border-radius: 4px;
+    transition: .8s;
 	}
 	.listbox .items a.imgbox .lazy:hover{
 		transform: scale(1.12);
@@ -138,7 +138,7 @@
 	}
 	.listbox .items .slbox{
 		margin-top: 8px;
-	    color: #666;
+    color: #666;
 		line-height: 24px;
 	}
 	.listbox .items .slbox a{
@@ -149,9 +149,9 @@
 	}
 	.listbox .items .slbox .title a{
 		font-size: 18px;
-    	font-weight: 600;
-    	color:#333;
-    	display: block;
+    font-weight: 600;
+    color:#333;
+    display: block;
 	}
 	.listbox .items .slbox .prices{
 		color:red;
@@ -161,7 +161,7 @@
 	.listbox .items .slbox .desc{
 		line-height: 20px;
 		max-width: 210px;
-    	display: table-cell;
+    display: table-cell;
 	}
 	.listbox .items .slbox .in_kind{
 		display: table;

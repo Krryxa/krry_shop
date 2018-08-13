@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div style="position: relative;height: 100%;">
 		<KHeader></KHeader>
 		<!-- 获取路由路径上的参数{{$route.params.bid}} -->
 		<div class="content">
@@ -54,8 +54,13 @@
 	import {getCateShop} from '../api/index.js';
 	export default{
 		data(){
-			return {cateNames:['全部商品','电子产品','衣物鞋包','美妆个护','饮食酒类','医药保健','图书音像'],
-				cateShop:[],loading:true}
+			return {
+        cateNames: [
+          '全部商品','电子产品','衣物鞋包','美妆个护','饮食酒类','医药保健','图书音像'
+        ],
+        cateShop: [],
+        loading: true,
+      } 
 		},
 		created(){
 			this.getCateShop();
@@ -90,6 +95,7 @@
 	}
 </script>
 <style type="text/css" scoped>
+  .content{margin-bottom: 151px;}
 	.router-link-active{
 		color: #dd5862 !important;
 		text-decoration: none;
