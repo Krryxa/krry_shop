@@ -50,6 +50,11 @@ Vue.use(VueLazyload, {
   attempt: 1
 })
 
+Vue.mixin({
+  created () {
+    console.log('mixin的');
+  },
+});
 
 new Vue({
   el: '#app',

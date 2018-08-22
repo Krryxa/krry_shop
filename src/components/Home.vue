@@ -67,6 +67,7 @@
 			return {newShop:[],loading:true}
 		},
 		created(){
+			console.log('子的');
 			this.getNewShop();
 		},
 		methods:{
